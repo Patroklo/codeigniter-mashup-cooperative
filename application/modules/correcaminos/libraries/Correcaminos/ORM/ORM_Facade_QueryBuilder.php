@@ -241,5 +241,10 @@
 		{
 			$this->ORM_QueryBuilder->save();
 		}
+		
+		function row()
+		{
+			return $this->ORM_QueryBuilder->row();
+		}
     
     }

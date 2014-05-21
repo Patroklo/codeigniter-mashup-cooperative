@@ -403,6 +403,13 @@
             return $result;
         }
 		
+		function row()
+		{
+			$result_data = $this->limit(1)->get();
+			
+			return reset($result_data);
+		}
+		
 		private function _whipe_out()
 		{
 			$this->_select_list = NULL;

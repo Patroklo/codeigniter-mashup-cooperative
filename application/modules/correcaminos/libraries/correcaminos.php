@@ -38,9 +38,9 @@ use Correcaminos\Database\Driver,
 
 
 			$db_conn['hostname'] 		= 'localhost';
-			$db_conn['username'] 		= 'root';
-			$db_conn['password'] 		= 'A52%4Y/{/U,4+,q';
-			$db_conn['database']		= 'pruebas';
+			$db_conn['username'] 		= '';
+			$db_conn['password'] 		= '';
+			$db_conn['database']		= '';
 			$db_conn['dbdriver'] 		= 'mysql';
             $db_conn['pconnect'] 		= FALSE;
             $db_conn['db_debug'] 		= TRUE;
@@ -52,7 +52,7 @@ use Correcaminos\Database\Driver,
 			$db_conn['filecache_on'] 	= FALSE;
 			$db_conn['memcache_expire'] = 300;
 			
-			$db_conn['regenerate_table_file_data'] = FALSE;
+			$db_conn['regenerate_table_file_data'] = TRUE;
 			
 			
             $db_conn['cachedir'] 		= '';

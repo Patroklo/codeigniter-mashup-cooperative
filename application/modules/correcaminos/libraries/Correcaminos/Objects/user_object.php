@@ -26,6 +26,7 @@
 			return $this->_data->username;
 		}
 		
+	
 		function is_admin()
 		{
 			
@@ -52,5 +53,48 @@
 			return $this->is_admin;
 			
 		}
+
+
+		public function in_group($check_group, $check_all = false)
+		{
+			if(!$this->logged_in())
+			{
+				return FALSE;
+			}
+
+			if (!is_array($check_group))
+			{
+				$check_group = array($check_group);
+			}
+	
+			$groups_array = $this->get_data('groups');
+
+			foreach ($check_group as $key => $value)
+			{
+				$groups = (is_string($value)) ? $groups_array : array_keys($groups_array);
+	
+				/**
+				 * if !all (default), in_array
+				 * if all, !in_array
+				 */
+				if (in_array($value, $groups) xor $check_all)
+				{
+					/**
+					 * if !all (default), true
+					 * if all, false
+					 */
+					return !$check_all;
+				}
+			}
+	
+			/**
+			 * if !all (default), false
+			 * if all, true
+			 */
+			return $check_all;
+		}
+
+
+
 
     }

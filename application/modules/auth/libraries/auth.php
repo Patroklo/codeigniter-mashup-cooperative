@@ -93,7 +93,7 @@
 			{
 				if($this->logged_in())
 				{
-					$this->_logged_user = reset($this->correcaminos->beep('user_object')->where('id', $this->get_user_id())->get());
+					$this->_logged_user = $this->correcaminos->beep('user_object')->where('id', $this->get_user_id())->row();
 
 					$this->_check_banned();
 				}

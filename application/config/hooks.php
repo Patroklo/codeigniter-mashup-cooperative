@@ -36,11 +36,23 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 |	http://codeigniter.com/user_guide/general/hooks.html
 |
 */
+
+/**
+ * FILTER HOOKS. CALLED FOR FILTER CLOSURES FROM ROUTES
+ */
+
 $hook['pre_controller'] = array(
                                 'class'    => 'Filters',
-                                'function' => 'load',
+                                'function' => 'before',
                                 'filename' => 'Filters.php',
-                                'filepath' => 'core',
+                                'filepath' => 'hooks',
+                                );
+
+$hook['post_controller'] = array(
+                                'class'    => 'Filters',
+                                'function' => 'after',
+                                'filename' => 'Filters.php',
+                                'filepath' => 'hooks',
                                 );
 
 /* End of file hooks.php */

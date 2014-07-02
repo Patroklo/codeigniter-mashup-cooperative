@@ -109,7 +109,7 @@ use Correcaminos\Database\QueryBuilder;
 			}
 			else
 			{
-				return $this->queryString->delete($table);
+				return $this->queryString->From($table)->delete();
 			}
 		}
 		
@@ -123,7 +123,7 @@ use Correcaminos\Database\QueryBuilder;
 			}
 			else
 			{
-				return $this->queryString->update($table, $data);
+				return $this->queryString->From($table)->values($data)->update();
 			}
 		}
 		

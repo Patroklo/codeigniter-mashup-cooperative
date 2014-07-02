@@ -176,7 +176,7 @@
 
 			if($query_write == TRUE)
 			{
-				MemoryManager::set_affected_rows($result_data);
+				MemoryManager::set_affected_rows($result_data->rowCount());
 				return $result_data;
 			}
 			else

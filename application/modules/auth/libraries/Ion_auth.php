@@ -93,7 +93,7 @@ class Ion_auth
 
 				if(!$this->config->item('use_ci_email', 'ion_auth'))
 				{
-					$this->set_message('forgot_password_successful');
+					$this->ion_auth_model->set_message('forgot_password_successful');
 					return $data;
 				}
 				else
@@ -107,25 +107,25 @@ class Ion_auth
 
 					if ($this->email->send())
 					{
-						$this->set_message('forgot_password_successful');
+						$this->ion_auth_model->set_message('forgot_password_successful');
 						return TRUE;
 					}
 					else
 					{
-						$this->set_error('forgot_password_unsuccessful');
+						$this->ion_auth_model->set_error('forgot_password_unsuccessful');
 						return FALSE;
 					}
 				}
 			}
 			else
 			{
-				$this->set_error('forgot_password_unsuccessful');
+				$this->ion_auth_model->set_error('forgot_password_unsuccessful');
 				return FALSE;
 			}
 		}
 		else
 		{
-			$this->set_error('forgot_password_unsuccessful');
+			$this->ion_auth_model->set_error('forgot_password_unsuccessful');
 			return FALSE;
 		}
 	}
@@ -146,7 +146,7 @@ class Ion_auth
 		if (!$profile)
 		{
 			$this->ion_auth_model->trigger_events(array('post_password_change', 'password_change_unsuccessful'));
-			$this->set_error('password_change_unsuccessful');
+			$this->ion_auth_model->set_error('password_change_unsuccessful');
 			return FALSE;
 		}
 
@@ -160,7 +160,7 @@ class Ion_auth
 			);
 			if(!$this->config->item('use_ci_email', 'ion_auth'))
 			{
-				$this->set_message('password_change_successful');
+				$this->ion_auth_model->set_message('password_change_successful');
 				$this->ion_auth_model->trigger_events(array('post_password_change', 'password_change_successful'));
 					return $data;
 			}
@@ -176,13 +176,13 @@ class Ion_auth
 
 				if ($this->email->send())
 				{
-					$this->set_message('password_change_successful');
+					$this->ion_auth_model->set_message('password_change_successful');
 					$this->ion_auth_model->trigger_events(array('post_password_change', 'password_change_successful'));
 					return TRUE;
 				}
 				else
 				{
-					$this->set_error('password_change_unsuccessful');
+					$this->ion_auth_model->set_error('password_change_unsuccessful');
 					$this->ion_auth_model->trigger_events(array('post_password_change', 'password_change_unsuccessful'));
 					return FALSE;
 				}
@@ -206,7 +206,7 @@ class Ion_auth
 
 		if (!is_object($profile))
 		{
-			$this->set_error('password_change_unsuccessful');
+			$this->ion_auth_model->set_error('password_change_unsuccessful');
 			return FALSE;
 		}
 		else
@@ -217,7 +217,7 @@ class Ion_auth
 				if (time() - $profile->forgotten_password_time > $expiration) {
 					//it has expired
 					$this->clear_forgotten_password_code($code);
-					$this->set_error('password_change_unsuccessful');
+					$this->ion_auth_model->set_error('password_change_unsuccessful');
 					return FALSE;
 				}
 			}
@@ -242,13 +242,13 @@ class Ion_auth
 			$id = $this->ion_auth_model->register($username, $password, $email, $additional_data, $group_ids);
 			if ($id !== FALSE)
 			{
-				$this->set_message('account_creation_successful');
+				$this->ion_auth_model->set_message('account_creation_successful');
 				$this->ion_auth_model->trigger_events(array('post_account_creation', 'post_account_creation_successful'));
 				return $id;
 			}
 			else
 			{
-				$this->set_error('account_creation_unsuccessful');
+				$this->ion_auth_model->set_error('account_creation_unsuccessful');
 				$this->ion_auth_model->trigger_events(array('post_account_creation', 'post_account_creation_unsuccessful'));
 				return FALSE;
 			}
@@ -259,7 +259,7 @@ class Ion_auth
 
 			if (!$id)
 			{
-				$this->set_error('account_creation_unsuccessful');
+				$this->ion_auth_model->set_error('account_creation_unsuccessful');
 				return FALSE;
 			}
 
@@ -267,7 +267,7 @@ class Ion_auth
 
 			if (!$deactivate)
 			{
-				$this->set_error('deactivate_unsuccessful');
+				$this->ion_auth_model->set_error('deactivate_unsuccessful');
 				$this->ion_auth_model->trigger_events(array('post_account_creation', 'post_account_creation_unsuccessful'));
 				return FALSE;
 			}
@@ -277,15 +277,15 @@ class Ion_auth
 			$user            = $this->correcaminos->beep($this->ion_auth_model->user_object)->where('id',$id)->row();
 
 			$data = array(
-				'identity'   => $user->{$identity},
-				'id'         => $user->id,
+				'identity'   => $user->get_data($identity),
+				'id'         => $user->get_data('id'),
 				'email'      => $email,
 				'activation' => $activation_code,
 			);
 			if(!$this->config->item('use_ci_email', 'ion_auth'))
 			{
 				$this->ion_auth_model->trigger_events(array('post_account_creation', 'post_account_creation_successful', 'activation_email_successful'));
-				$this->set_message('activation_email_successful');
+				$this->ion_auth_model->set_message('activation_email_successful');
 					return $data;
 			}
 			else
@@ -301,13 +301,13 @@ class Ion_auth
 				if ($this->email->send() == TRUE)
 				{
 					$this->ion_auth_model->trigger_events(array('post_account_creation', 'post_account_creation_successful', 'activation_email_successful'));
-					$this->set_message('activation_email_successful');
+					$this->ion_auth_model->set_message('activation_email_successful');
 					return $id;
 				}
 			}
 
 			$this->ion_auth_model->trigger_events(array('post_account_creation', 'post_account_creation_unsuccessful', 'activation_email_unsuccessful'));
-			$this->set_error('activation_email_unsuccessful');
+			$this->ion_auth_model->set_error('activation_email_unsuccessful');
 			return FALSE;
 		}
 	}

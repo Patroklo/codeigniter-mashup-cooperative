@@ -416,6 +416,7 @@ class Ion_auth_model extends CI_Model
 		{
 			$query = $this->db->select($this->identity_column)
 			                  ->where('activation_code', $code)
+							  ->where('id', $id)
 			                  ->limit(1)
 			                  ->get($this->tables['users']);
 
@@ -428,15 +429,13 @@ class Ion_auth_model extends CI_Model
 				return FALSE;
 			}
 
-			$identity = $result->{$this->identity_column};
-
 			$data = array(
 			    'activation_code' => NULL,
 			    'active'          => 1
 			);
 
 			$this->trigger_events('extra_where');
-			$this->db->update($this->tables['users'], $data, array($this->identity_column => $identity));
+			$this->db->update($this->tables['users'], $data, array('id' => $id));
 		}
 		else
 		{
@@ -464,7 +463,7 @@ class Ion_auth_model extends CI_Model
 		}
 
 
-		return $return;
+		return TRUE;
 	}
 
 
@@ -868,6 +867,7 @@ class Ion_auth_model extends CI_Model
 
 		$this->trigger_events('extra_set');
 
+
 		$this->db->insert($this->tables['users'], $user_data);
 
 		$id = $this->db->insert_id();
@@ -886,9 +886,12 @@ class Ion_auth_model extends CI_Model
 		//$default_group = $this->where('name', $this->config->item('default_group', 'ion_auth'))->group()->row();
 		$default_group = $this->correcaminos->beep($this->group_object)->where('name', $this->config->item('default_group', 'ion_auth'))->row();
 		
-		if (($default_group->get_data('id') && empty($groups)) || (!empty($groups) && !in_array($default_group->get_data('id'), $groups)))
+		if(!empty($default_group))
 		{
-			$this->add_to_group($default_group->get_data('id'), $id);
+			if (($default_group->get_data('id') && empty($groups)) || (!empty($groups) && !in_array($default_group->get_data('id'), $groups)))
+			{
+				$this->add_to_group($default_group->get_data('id'), $id);
+			}
 		}
 
 		$this->trigger_events('post_register');
@@ -1009,8 +1012,8 @@ class Ion_auth_model extends CI_Model
 				
 				if($login_successful == TRUE)
 				{
-					return TRUE;
 					$this->clear_login_attempts($identity);
+					return TRUE;
 				}
 				
 				return FALSE;

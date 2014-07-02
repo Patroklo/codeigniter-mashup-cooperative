@@ -38,9 +38,9 @@ use Correcaminos\Database\Driver,
 
 
 			$db_conn['hostname'] 		= 'localhost';
-			$db_conn['username'] 		= 'root';
-			$db_conn['password'] 		= 'A52%4Y/{/U,4+,q';
-			$db_conn['database']		= 'pruebas';
+			$db_conn['username'] 		= '';
+			$db_conn['password'] 		= '';
+			$db_conn['database']		= '';
 			$db_conn['dbdriver'] 		= 'mysql';
             $db_conn['pconnect'] 		= FALSE;
             $db_conn['db_debug'] 		= TRUE;

@@ -45,23 +45,16 @@ class Welcome extends CI_Controller {
 	 */
 	public function index()
 	{
-		// Ponemos el título de la página
-        $this->template->title = 'Cyneek landing page!';
-        
-        // Desconecto por ahora los bootstraps y demáses hasta que esté el formulario y demás hecho
-        // $this->template->stylesheet->add('http://twitter.github.com/bootstrap/assets/css/bootstrap.css');
-        
-        // Load a view in the content partial
-        $this->template->content->view('welcome_message');
-        
-        // Ponemos footers y demases
-        $this->template->footer = 'Hecho por Cyneek not inc.';
-	
-        // Publicamos como se haría en view
-        $this->template->publish();
+			
+		$this->load->library('cyforms/Cyforms');
+		echo $this->cyforms->text_field->options(array('id' => 'id_campo', 'name' => 'name_campo'))->generate();
+		
+		echo $this->cyforms->text_field->generate(array('id' => 'id_campo', 'name' => 'name_campo'));
+		
 	}
 	
 }
+
 
 /* End of file welcome.php */
 /* Location: ./application/controllers/Welcome.php */

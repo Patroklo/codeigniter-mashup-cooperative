@@ -77,9 +77,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 
 
+
 	Route::any('welcome', 'Welcome/index');
-	
+
 	$route = Route::map();
+
 
 	$route['default_controller'] = 'welcome';
 	$route['404_override'] = '';

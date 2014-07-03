@@ -1,6 +1,8 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-
+	// base class which will send a form field object depending of the __get like
+	// $this->cyforms->text_field->...
+	
 	class Cyforms
 	{
 		function __get($form_field)
@@ -15,6 +17,9 @@
 			}
 		}
 	}
+
+	// base class with all the common code for all the fields
+	// all fields must inherit it
 
 	class Cyform_field_base
 	{
@@ -132,11 +137,23 @@
 
 	}
 
+	/**
+	 * =========================================================================
+	 * 
+	 * 	Form field classes
+	 * 
+	 * =========================================================================
+	 */
+
+	// text field
 	
 	class text_field extends Cyform_field_base
 	{
 		protected $form_field_type = 'input_text';
 	}
+	
+	
+	// select field
 	
 	class select_field extends Cyform_field_base
 	{

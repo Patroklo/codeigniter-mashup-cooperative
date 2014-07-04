@@ -66,6 +66,9 @@
 			}
 			
 			$this->view_options = get_object_vars($this);
+			
+			$this->view_options['class'] = ((empty($this->class))?'':implode(' ', $this->class));
+			
 		}
 
 

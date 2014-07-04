@@ -1,5 +1,15 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+/*
+TODO en general:
+
+- Añadir valor de placeholder
+- Poder sobreescribir la opción de 'wrapper' y 'wrapper_view' al generar el campo
+
+
+*/
+
+
 	// base class which will send a form field object depending of the __get like
 	// $this->cyforms->text_field->...
 
@@ -30,6 +40,9 @@
 		protected $value;
 		protected $label;
 
+		// TODO: No sé si esto iría aquí...
+		protected $wrapper;
+		protected $wrapper_view;
 
 		// don't initialize manually
 		protected $view_options		= array();
@@ -60,15 +73,14 @@
 
 		protected function make_options()
 		{
-			if($this->name === NULL)
+			if ($this->name === NULL)
 			{
 				$this->name = $this->id;
 			}
-			
+
 			$this->view_options = get_object_vars($this);
-			
-			$this->view_options['class'] = ((empty($this->class))?'':implode(' ', $this->class));
-			
+
+			$this->view_options['class']	= ((empty($this->class))?'':implode(' ', $this->class));
 		}
 
 
@@ -82,7 +94,7 @@
 		{
 			$obligatory_options = array('id', 'name');
 
-			foreach($obligatory_options as $option_name)
+			foreach ($obligatory_options as $option_name)
 			{
 				if (!isset($this->view_options[$option_name]) || is_null($this->view_options[$option_name]))
 				{
@@ -108,6 +120,12 @@
 		 */
 		protected function generate_html()
 		{
+			// TODO: El valor de $this->wrapper debería depender también de si lo ha sobreescrito al crear el campo
+			if ($this->wrapper == TRUE)
+			{
+				$field	= $this->_ci->load->view($this->view_path.$this->form_field_type.'_view', $this->view_options, TRUE);
+				return $this->_ci->load->view($this->wrapper_view, array('field' => $field), TRUE);
+			}
 			return $this->_ci->load->view($this->view_path.$this->form_field_type.'_view', $this->view_options, TRUE);
 		}
 
@@ -116,15 +134,15 @@
 		{
 			foreach ($options as $option => $value)
 			{
-				if(isset($this->$option) && !is_null($this->$option))
+				if (isset($this->$option) && !is_null($this->$option))
 				{
-					if(is_array($this->$option))
+					if (is_array($this->$option))
 					{
-						if(!is_array($value))
+						if (!is_array($value))
 						{
 							$value = array($value);
 						}
-						
+
 						$this->$option = array_merge($this->$option, $value);
 					}
 					else
@@ -218,12 +236,12 @@
 
 	class datepicker extends Cyform_field_base
 	{
-		protected $form_field_type 	= 'date_selector';
-		
+		protected $form_field_type 	= 'datepicker';
+
 		// lo pongo en un array porque luego es más fácil de trabajar con estos
-		// a la hora de usarlo en el html colo tienes que poner 
+		// a la hora de usarlo en el html colo tienes que poner
 		// class="'.implode(' ', $class_list).'"
-		
+
 		protected $class 			= array('datepicker');
 
 	}

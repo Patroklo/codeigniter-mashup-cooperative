@@ -23,16 +23,16 @@
 
 	class Cyform_field_base
 	{
-
+		// base field values and html options
 		protected $id;
 		protected $name;
-		protected $class;
+		protected $class = array();
 		protected $value;
+		protected $label;
 
 
 		// don't initialize manually
 		protected $view_options		= array();
-		protected $label			= FALSE;
 		protected $view_path;
 		protected $form_field_type	= NULL;
 		protected $_ci;
@@ -60,6 +60,11 @@
 
 		protected function make_options()
 		{
+			if($this->name === NULL)
+			{
+				$this->name = $this->id;
+			}
+			
 			$this->view_options = get_object_vars($this);
 		}
 
@@ -108,7 +113,26 @@
 		{
 			foreach ($options as $option => $value)
 			{
-				$this->$option = $value;
+				if(isset($this->$option) && !is_null($this->$option))
+				{
+					if(is_array($this->$option))
+					{
+						if(!is_array($value))
+						{
+							$value = array($value);
+						}
+						
+						$this->$option = array_merge($this->$option, $value);
+					}
+					else
+					{
+						$this->$option.= $value;
+					}
+				}
+				else
+				{
+					$this->$option = $value;
+				}
 			}
 
 			return $this;
@@ -189,3 +213,14 @@
 
 	}
 
+	class datepicker extends Cyform_field_base
+	{
+		protected $form_field_type 	= 'date_selector';
+		
+		// lo pongo en un array porque luego es más fácil de trabajar con estos
+		// a la hora de usarlo en el html colo tienes que poner 
+		// class="'.implode(' ', $class_list).'"
+		
+		protected $class 			= array('datepicker');
+
+	}

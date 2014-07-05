@@ -49,7 +49,14 @@ class Welcome extends CI_Controller {
 		$this->load->library('cyforms/Cyforms');
 		echo $this->cyforms->input_text->options(array('id' => 'id_campo', 'name' => 'name_campo'))->generate();
 
-		echo $this->cyforms->select->generate(array(
+		echo $this->cyforms->datepicker->generate(array(
+			'id'			=> 'le_checkbox2',
+			'name'			=> 'le_name2',
+			'class'			=> 'hola caracola',
+			'wrapper'		=> FALSE
+		));
+
+		/*echo $this->cyforms->select->generate(array(
 			'id'			=> 'le_checkbox',
 			'name'			=> 'le_name',
 			'option_values'	=> array(
@@ -57,7 +64,7 @@ class Welcome extends CI_Controller {
 				'3'		=> 'Atún',
 				'42'	=> 'Duh'
 			)
-		));
+		));*/
 
 	}
 

@@ -1,0 +1,3 @@
+[Inicio wrap]
+<?=$field?>
+[Fin]

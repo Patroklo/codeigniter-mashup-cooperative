@@ -1,15 +1,5 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-/*
-TODO en general:
-
-- Añadir valor de placeholder
-- Poder sobreescribir la opción de 'wrapper' y 'wrapper_view' al generar el campo
-
-
-*/
-
-
 	// base class which will send a form field object depending of the __get like
 	// $this->cyforms->text_field->...
 
@@ -39,12 +29,13 @@ TODO en general:
 		protected $class = array();
 		protected $value;
 		protected $label;
+		protected $placeholder;
 
-		// TODO: No sé si esto iría aquí...
-		protected $wrapper;
+		// initialited automatically BUT may be changed manually
+		protected $wrapper;		// (boolean) Inserts the field between a HTML wrapper
 		protected $wrapper_view;
 
-		// don't initialize manually
+		// can't initialize manually
 		protected $view_options		= array();
 		protected $view_path;
 		protected $form_field_type	= NULL;
@@ -120,35 +111,45 @@ TODO en general:
 		 */
 		protected function generate_html()
 		{
-			// TODO: El valor de $this->wrapper debería depender también de si lo ha sobreescrito al crear el campo
+			$field	= $this->_ci->load->view($this->view_path.$this->form_field_type.'_view', $this->view_options, TRUE);
+			
 			if ($this->wrapper == TRUE)
 			{
-				$field	= $this->_ci->load->view($this->view_path.$this->form_field_type.'_view', $this->view_options, TRUE);
 				return $this->_ci->load->view($this->wrapper_view, array('field' => $field), TRUE);
 			}
-			return $this->_ci->load->view($this->view_path.$this->form_field_type.'_view', $this->view_options, TRUE);
+			
+			return $field;
 		}
 
+		/**
+		 * inserts in the object the options parameters given in the field initialization
+		 *
+		 * @return void
+		 */
 
 		public function options(array $options)
 		{
+			$invalid_values = array('view_options', 'view_path', 'form_field_type', '_ci');
+			
+			foreach ($invalid_values as $value) 
+			{
+				if(array_key_exists($value, $options))
+				{
+					unset($options[$value]);
+				}
+			}
+		
+			
 			foreach ($options as $option => $value)
 			{
-				if (isset($this->$option) && !is_null($this->$option))
-				{
-					if (is_array($this->$option))
+				if (isset($this->$option) && !is_null($this->$option) and is_array($this->$option))
+				{				
+					if (!is_array($value))
 					{
-						if (!is_array($value))
-						{
-							$value = array($value);
-						}
+						$value = array($value);
+					}
 
-						$this->$option = array_merge($this->$option, $value);
-					}
-					else
-					{
-						$this->$option.= $value;
-					}
+					$this->$option = array_merge($this->$option, $value);
 				}
 				else
 				{

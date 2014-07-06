@@ -1,2 +1,4 @@
-<label for="exampleInputEmail1">Email address</label>
-<input type="email" class="form-control" id="exampleInputEmail1" placeholder="Enter email">
+<?php if ($label) { ?>
+	<label for="<?=$id?>"><?=$label?></label>
+<?php } ?>
+<input type="text" class="form-control" id="<?=$id?>"<?=($placeholder)?' placeholder="'.$placeholder.'"':''?>>

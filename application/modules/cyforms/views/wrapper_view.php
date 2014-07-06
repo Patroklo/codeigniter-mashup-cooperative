@@ -1,3 +1,3 @@
-[Inicio wrap]
-<?=$field?>
-[Fin]
+<div class="form-group">
+	<?=$field?>
+</div>

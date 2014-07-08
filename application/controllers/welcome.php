@@ -47,12 +47,17 @@ class Welcome extends CI_Controller {
 	{
 
 		$this->load->library('cyforms/Cyforms');
-		echo $this->cyforms->input_text->options(array('id' => 'id_campo', 'name' => 'name_campo'))->generate();
+		echo $this->cyforms->input_text->options(array(
+			'id'			=> 'id_campo',
+			'label'			=> 'Campo de prueba',
+			'placeholder'	=> 'Un placeholder',
+			'name'			=> 'name_campo'
+		))->generate();
 
 		echo $this->cyforms->datepicker->generate(array(
 			'id'			=> 'le_checkbox2',
 			'name'			=> 'le_name2',
-			'class'			=> 'hola caracola',
+			'label'			=> 'Otro campo de prueba',
 			'wrapper'		=> FALSE
 		));
 

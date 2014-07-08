@@ -1,2 +1,4 @@
-<input type="text" class="<?=$class?>" id="datepicker" placeholder="Placeholder">
-<?php var_dump($wrapper); ?>
+<?php if ($label) { ?>
+	<label for="<?=$id?>"><?=$label?></label>
+<?php } ?>
+<input type="date" class="form-control <?=$class?>" id="<?=$id?>" placeholder="Enter email">

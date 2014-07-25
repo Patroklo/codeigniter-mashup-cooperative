@@ -124,12 +124,23 @@
 		/**
 		 * inserts in the object the options parameters given in the field initialization
 		 *
+		 * 	special options
+		 * 
+		 * 		reset_class = deletes the class array and sets an empty array for it
+		 * 
+		 * 
 		 * @return void
 		 */
 
 		public function options(array $options)
 		{
-			$invalid_values = array('view_options', 'view_path', 'form_field_type', '_ci');
+			$invalid_values = array('view_options', 'view_path', 'form_field_type', '_ci', 'reset_class');
+
+			
+			if(array_key_exists('reset_class', $options))
+			{
+				$this->class = array();
+			}
 			
 			foreach ($invalid_values as $value) 
 			{

@@ -112,12 +112,12 @@
 		protected function generate_html()
 		{
 			$field	= $this->_ci->load->view($this->view_path.$this->form_field_type.'_view', $this->view_options, TRUE);
-			
+
 			if ($this->wrapper == TRUE)
 			{
 				return $this->_ci->load->view($this->wrapper_view, array('field' => $field), TRUE);
 			}
-			
+
 			return $field;
 		}
 
@@ -125,10 +125,10 @@
 		 * inserts in the object the options parameters given in the field initialization
 		 *
 		 * 	special options
-		 * 
+		 *
 		 * 		reset_class = deletes the class array and sets an empty array for it
-		 * 
-		 * 
+		 *
+		 *
 		 * @return void
 		 */
 
@@ -136,25 +136,25 @@
 		{
 			$invalid_values = array('view_options', 'view_path', 'form_field_type', '_ci', 'reset_class');
 
-			
+
 			if(array_key_exists('reset_class', $options))
 			{
 				$this->class = array();
 			}
-			
-			foreach ($invalid_values as $value) 
+
+			foreach ($invalid_values as $value)
 			{
 				if(array_key_exists($value, $options))
 				{
 					unset($options[$value]);
 				}
 			}
-		
-			
+
+
 			foreach ($options as $option => $value)
 			{
 				if (isset($this->$option) && !is_null($this->$option) and is_array($this->$option))
-				{				
+				{
 					if (!is_array($value))
 					{
 						$value = array($value);
@@ -242,6 +242,14 @@
 	{
 
 		protected $form_field_type = 'checkbox';
+		protected $checked	= FALSE;
+
+	}
+
+	class dropdown extends Cyform_field_base
+	{
+
+		protected $form_field_type = 'dropdown';
 		protected $checked	= FALSE;
 
 	}

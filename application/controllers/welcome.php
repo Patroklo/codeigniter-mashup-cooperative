@@ -44,11 +44,36 @@ class Welcome extends CI_Controller {
 			'label'				=> 'Campo con data attributes',
 			'name'				=> 'element_name',
 			'value'				=> 'Aloha',
+			'autofocus'			=> TRUE,
+			'placeholder'		=> 'Placeholder...',
 			'data_attributes'	=> array(
 				'prueba'	=> 'wat',
 				'test'		=> '200'
 			),
 			'extra'				=> 'extra="una string extra"'
+		));
+
+		echo $this->cyforms->radio->generate(array(
+			'id'		=> 'le_radio',
+			'name'		=> 'le_name',
+			'label'		=> 'Un radio menú',
+			'value'		=> 3,
+			'disabled'	=> TRUE,
+			'options'	=> array(
+				array(
+					'value'	=> 1,
+					'label'	=> 'Opción'
+				),
+				array(
+					'value'	=> 2,
+					'label'	=> 'Otra opción'
+				),
+				array(
+					'value'		=> 3,
+					'label'		=> 'Tercera',
+					'disabled'	=> TRUE
+				),
+			)
 		));
 
 		/*echo $this->cyforms->select->generate(array(

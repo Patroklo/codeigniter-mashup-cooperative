@@ -1,5 +1,13 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+	/*
+
+		TODO:
+		error handling
+		help text
+
+	*/
+
 	// base class which will send a form field object depending of the __get like
 	// $this->cyforms->text_field->...
 
@@ -30,6 +38,9 @@
 		protected $value;
 		protected $label;
 		protected $placeholder;
+		protected $disabled;
+		protected $readonly;
+		protected $autofocus;
 		protected $data_attributes = array();
 		protected $extra;
 
@@ -83,6 +94,21 @@
 				$this->view_data['attributes']	.= ' placeholder="'.$this->placeholder.'"';
 			}
 
+			if ($this->disabled == TRUE)
+			{
+				$this->view_data['attributes']	.= ' disabled';
+			}
+
+			if ($this->readonly == TRUE)
+			{
+				$this->view_data['attributes']	.= ' readonly';
+			}
+
+			if ($this->autofocus == TRUE)
+			{
+				$this->view_data['attributes']	.= ' autofocus';
+			}
+
 			if ( ! empty($this->data_attributes))
 			{
 				foreach ($this->data_attributes as $key => $d)
@@ -91,10 +117,9 @@
 				}
 			}
 
-			$this->view_data['extra']	= '';
 			if ($this->extra !== NULL)
 			{
-				$this->view_data['attributes']	= ' '.$this->extra;
+				$this->view_data['attributes']	.= ' '.$this->extra;
 			}
 
 		}
@@ -271,11 +296,18 @@
 
 	}
 
+	class radio extends Cyform_field_base
+	{
+
+		protected $form_field_type = 'radio';
+		protected $options	= FALSE;
+
+	}
+
 	class dropdown extends Cyform_field_base
 	{
 
 		protected $form_field_type = 'dropdown';
-		protected $checked	= FALSE;
 
 	}
 

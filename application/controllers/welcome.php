@@ -39,6 +39,18 @@ class Welcome extends CI_Controller {
 			)
 		));
 
+		echo $this->cyforms->input_text->generate(array(
+			'id'				=> 'element_id',
+			'label'				=> 'Campo con data attributes',
+			'name'				=> 'element_name',
+			'value'				=> 'Aloha',
+			'data_attributes'	=> array(
+				'prueba'	=> 'wat',
+				'test'		=> '200'
+			),
+			'extra'				=> 'extra="una string extra"'
+		));
+
 		/*echo $this->cyforms->select->generate(array(
 			'id'			=> 'le_checkbox',
 			'name'			=> 'le_name',

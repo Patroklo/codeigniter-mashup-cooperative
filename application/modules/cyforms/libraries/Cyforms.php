@@ -30,13 +30,15 @@
 		protected $value;
 		protected $label;
 		protected $placeholder;
+		protected $data_attributes = array();
+		protected $extra;
 
 		// initialited automatically BUT may be changed manually
 		protected $wrapper;		// (boolean) Inserts the field between a HTML wrapper
 		protected $wrapper_view;
 
 		// can't initialize manually
-		protected $view_options		= array();
+		protected $view_data		= array();
 		protected $view_path;
 		protected $form_field_type	= NULL;
 		protected $_ci;
@@ -57,39 +59,62 @@
 		}
 
 		/**
-		 * fill the $view_options array that will send all the form data into the field method
+		 * fill the $view_data array that will send all the form data into the field method
 		 *
 		 * @return void
 		 */
 
-		protected function make_options()
+		protected function make_data()
 		{
+
 			if ($this->name === NULL)
 			{
 				$this->name = $this->id;
 			}
 
-			$this->view_options = get_object_vars($this);
+			$this->view_data = get_object_vars($this);
 
-			$this->view_options['class']	= ((empty($this->class))?'':implode(' ', $this->class));
+			$this->view_data['class']	= ((empty($this->class))?'':implode(' ', $this->class));
+
+			$this->view_data['attributes']	= '';
+
+			if ($this->placeholder !== NULL)
+			{
+				$this->view_data['attributes']	.= ' placeholder="'.$this->placeholder.'"';
+			}
+
+			if ( ! empty($this->data_attributes))
+			{
+				foreach ($this->data_attributes as $key => $d)
+				{
+					$this->view_data['attributes']	.= ' data-'.$key.'="'.$d.'"';
+				}
+			}
+
+			$this->view_data['extra']	= '';
+			if ($this->extra !== NULL)
+			{
+				$this->view_data['attributes']	= ' '.$this->extra;
+			}
+
 		}
 
 
 		/**
-		 * check the $view_options array for initialization errors, like no form field name, id, etc...
+		 * check the $view_data array for initialization errors, like no form field name, id, etc...
 		 *
 		 * @return void
 		 */
 
-		protected function check_options()
+		protected function check_data()
 		{
-			$obligatory_options = array('id', 'name');
+			$obligatory_data = array('id', 'name');
 
-			foreach ($obligatory_options as $option_name)
+			foreach ($obligatory_data as $data_name)
 			{
-				if (!isset($this->view_options[$option_name]) || is_null($this->view_options[$option_name]))
+				if (!isset($this->view_data[$data_name]) || is_null($this->view_data[$data_name]))
 				{
-					$this->exception('The '.$option_name.' option it\'s not defined');
+					$this->exception('The '.$data_name.' data it\'s not defined');
 					return FALSE;
 				}
 			}
@@ -111,7 +136,7 @@
 		 */
 		protected function generate_html()
 		{
-			$field	= $this->_ci->load->view($this->view_path.$this->form_field_type.'_view', $this->view_options, TRUE);
+			$field	= $this->_ci->load->view($this->view_path.$this->form_field_type.'_view', $this->view_data, TRUE);
 
 			if ($this->wrapper == TRUE)
 			{
@@ -134,17 +159,17 @@
 
 		public function options(array $options)
 		{
-			$invalid_values = array('view_options', 'view_path', 'form_field_type', '_ci', 'reset_class');
+			$invalid_values = array('view_data', 'view_path', 'form_field_type', '_ci', 'reset_class');
 
 
-			if(array_key_exists('reset_class', $options))
+			if (array_key_exists('reset_class', $options))
 			{
 				$this->class = array();
 			}
 
 			foreach ($invalid_values as $value)
 			{
-				if(array_key_exists($value, $options))
+				if (array_key_exists($value, $options))
 				{
 					unset($options[$value]);
 				}
@@ -178,9 +203,9 @@
 				$this->options($options);
 			}
 
-			$this->make_options();
+			$this->make_data();
 
-			if ($this->check_options() == FALSE)
+			if ($this->check_data() == FALSE)
 			{
 				return FALSE;
 			}
@@ -224,16 +249,16 @@
 		 * @return void
 		 */
 
-		protected function check_options()
+		protected function check_data()
 		{
 
-			if (is_null($this->view_options['option_values']))
+			if (is_null($this->view_data['option_values']))
 			{
 				$this->exception('The select field doesn\'t have any defined options.');
 				return FALSE;
 			}
 
-			return parent::check_options();
+			return parent::check_data();
 		}
 
 	}

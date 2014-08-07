@@ -27,11 +27,12 @@ class Welcome extends CI_Controller {
 			'checked'	=> TRUE
 		));
 
-		echo $this->cyforms->dropdown->generate(array(
+		echo $this->cyforms->select->generate(array(
 			'id'		=> 'le_dropdown',
 			'name'		=> 'le_name5',
 			'label'		=> 'Un dropdown',
 			'value'		=> 3,
+			'disabled'	=> TRUE,
 			'options'	=> array(
 				'1'	=> 'Opción',
 				'3'	=> 'Otra opción',

@@ -266,7 +266,6 @@
 	{
 
 		protected $form_field_type = 'select';
-		protected $option_values;
 
 		/**
 		 * checks additional options for the select field
@@ -276,13 +275,11 @@
 
 		protected function check_data()
 		{
-
-			if (is_null($this->view_data['option_values']))
+			if (is_null($this->view_data['options']))
 			{
 				$this->exception('The select field doesn\'t have any defined options.');
 				return FALSE;
 			}
-
 			return parent::check_data();
 		}
 
@@ -301,13 +298,6 @@
 
 		protected $form_field_type = 'radio';
 		protected $options	= FALSE;
-
-	}
-
-	class dropdown extends Cyform_field_base
-	{
-
-		protected $form_field_type = 'dropdown';
 
 	}
 

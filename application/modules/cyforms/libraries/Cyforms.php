@@ -38,14 +38,14 @@
 		protected $value;
 		protected $label;
 		protected $placeholder;
-		protected $disabled;
-		protected $readonly;
-		protected $autofocus;
+		protected $disabled;		// boolean
+		protected $readonly;		// boolean
+		protected $autofocus;		// boolean
 		protected $data_attributes = array();
 		protected $extra;
 
 		// initialited automatically BUT may be changed manually
-		protected $wrapper;		// (boolean) Inserts the field between a HTML wrapper
+		protected $wrapper;			// (boolean) Inserts the field between a HTML wrapper
 		protected $wrapper_view;
 
 		// can't initialize manually
@@ -82,45 +82,45 @@
 			{
 				$this->name = $this->id;
 			}
-
+ 
+ 			$array_eliminar = array('wrapper', 'wrapper_view', 'view_data', 'view_path', 'form_field_type', '_ci');
+			
 			$this->view_data = get_object_vars($this);
+			
+			foreach($array_eliminar as $fijo)
+			{
+				unset($this->view_data[$fijo]);
+			}
 
 			$this->view_data['class']	= ((empty($this->class))?'':implode(' ', $this->class));
 
-			$this->view_data['attributes']	= '';
 
-			if ($this->placeholder !== NULL)
+			$this->view_data['attributes']	= array();
+			
+			foreach ($this->data_attributes as $key => $d)
 			{
-				$this->view_data['attributes']	.= ' placeholder="'.$this->placeholder.'"';
+				$this->view_data['attributes'][] = 'data-'.$key.'="'.$d.'"';
 			}
+			
+			unset($this->view_data['data_attributes']);
 
-			if ($this->disabled == TRUE)
+			$array_attributes = array('placeholder'	=> 'placeholder="'.$this->placeholder.'"', 
+									  'disabled'	=> 'disabled', 
+									  'readonly'	=> 'readonly', 
+									  'autofocus'	=> 'autofocus', 
+									  'extra'		=> $this->extra);
+			
+			foreach($array_attributes as $attr => $value)
 			{
-				$this->view_data['attributes']	.= ' disabled';
-			}
-
-			if ($this->readonly == TRUE)
-			{
-				$this->view_data['attributes']	.= ' readonly';
-			}
-
-			if ($this->autofocus == TRUE)
-			{
-				$this->view_data['attributes']	.= ' autofocus';
-			}
-
-			if ( ! empty($this->data_attributes))
-			{
-				foreach ($this->data_attributes as $key => $d)
+				unset($this->view_data[$attr]);
+				
+				if($this->{$attr})
 				{
-					$this->view_data['attributes']	.= ' data-'.$key.'="'.$d.'"';
+					$this->view_data['attributes'][] = $value;
 				}
 			}
-
-			if ($this->extra !== NULL)
-			{
-				$this->view_data['attributes']	.= ' '.$this->extra;
-			}
+			
+			$this->view_data['attributes'] = implode(' ', $this->view_data['attributes']);
 
 		}
 
@@ -221,6 +221,12 @@
 			return $this;
 		}
 
+		/**
+		 * returns the html of the form field checking before that if all the options are valid
+		 *
+		 * @return HTML
+		 */
+		 
 		public function generate($options = NULL)
 		{
 			if (!is_null($options))
@@ -252,7 +258,6 @@
 	 *
 	 * =========================================================================
 	 */
-
 
 	class input_text extends Cyform_field_base
 	{

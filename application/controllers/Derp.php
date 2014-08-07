@@ -9,9 +9,13 @@ class Derp extends CI_Controller {
 		$this->load->library('cyforms/cyforms');
 
 		echo $this->cyforms->field('derp', array(
-			'id'	=> 'element_id',
-			'name'	=> 'element_name',
-			'value'	=> 'Aloha'
+			'id'				=> 'element_id',
+			'name'				=> 'element_name',
+			'value'				=> 'Aloha',
+			'data_attributes'	=> array(
+				'prueba'	=> 'wat',
+				'test'		=> '200'
+			)
 		));
 
 		echo 'Testing.';

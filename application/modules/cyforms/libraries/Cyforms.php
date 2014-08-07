@@ -38,14 +38,14 @@
 		protected $value;
 		protected $label;
 		protected $placeholder;
-		protected $disabled;
-		protected $readonly;
-		protected $autofocus;
+		protected $disabled;		// boolean
+		protected $readonly;		// boolean
+		protected $autofocus;		// boolean
 		protected $data_attributes = array();
 		protected $extra;
 
 		// initialited automatically BUT may be changed manually
-		protected $wrapper;		// (boolean) Inserts the field between a HTML wrapper
+		protected $wrapper;			// (boolean) Inserts the field between a HTML wrapper
 		protected $wrapper_view;
 
 		// can't initialize manually

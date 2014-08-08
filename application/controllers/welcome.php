@@ -47,6 +47,7 @@ class Welcome extends CI_Controller {
 			'value'				=> 'Aloha',
 			'autofocus'			=> TRUE,
 			'placeholder'		=> 'Placeholder...',
+			'help'				=> 'Un texto de ayuda sobre este campo en concreto.',
 			'data_attributes'	=> array(
 				'prueba'	=> 'wat',
 				'test'		=> '200'

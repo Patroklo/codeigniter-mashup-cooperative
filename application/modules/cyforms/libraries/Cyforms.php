@@ -4,7 +4,6 @@
 
 		TODO:
 		error handling
-		help text
 
 	*/
 
@@ -39,6 +38,8 @@
 		protected $label;
 		protected $placeholder;
 		protected $help;
+		protected $error;
+		protected $errors;
 		protected $disabled;		// boolean
 		protected $readonly;		// boolean
 		protected $autofocus;		// boolean

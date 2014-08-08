@@ -40,7 +40,9 @@ class Welcome extends CI_Controller {
 			)
 		));
 
-		echo $this->cyforms->input_text->generate(array(
+		$this->load->helper('cyforms/cyforms');
+
+		echo generate_field('input_text', array(
 			'id'				=> 'element_id',
 			'label'				=> 'Campo con data attributes',
 			'name'				=> 'element_name',
@@ -48,6 +50,7 @@ class Welcome extends CI_Controller {
 			'autofocus'			=> TRUE,
 			'placeholder'		=> 'Placeholder...',
 			'help'				=> 'Un texto de ayuda sobre este campo en concreto.',
+			'error'				=> 'El campo dududuá es obligatorio.',
 			'data_attributes'	=> array(
 				'prueba'	=> 'wat',
 				'test'		=> '200'

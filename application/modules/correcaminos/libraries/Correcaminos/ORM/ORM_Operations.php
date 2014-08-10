@@ -33,7 +33,10 @@
 			{
 				if($column['Field'] != $object_key_pri)
 				{
-					$data_values[$column['Field']] = $object->get_data($column['Field']);
+					if(!($object->get_data($column['Field']) === NULL and $column['Null'] == 'NO'))
+					{
+						$data_values[$column['Field']] = $object->get_data($column['Field']);
+					}
 				}
 			}
 
@@ -58,9 +61,10 @@
 				elseif($state == 'DELETE')
 				{
 					$queryString->delete();
+					MemoryManager::delete_object($object);
+
 					unset($object);
 					
-					MemoryManager::delete_object($object);
 				}
 			}
 		}

@@ -236,6 +236,19 @@
         {
            return $this->ORM_QueryBuilder->get($cache);
         }
+
+        function get_one($cache = NULL)
+        {
+           $return_data = $this->ORM_QueryBuilder->get($cache);
+		   
+		   if(is_array($return_data))
+		   {
+		   		return reset($return_data);
+		   }
+		   
+		   return $return_data;
+		   
+        }
 		
 		function save()
 		{

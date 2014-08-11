@@ -27,19 +27,12 @@ class Welcome extends CI_Controller {
 			'checked'	=> TRUE
 		));
 
-<<<<<<< HEAD
-		echo $this->cyforms->dropdown->generate(array(
-=======
 		echo $this->cyforms->select->generate(array(
->>>>>>> 213f5840962819c7cfab0f6cb1d95cf5c58234c3
 			'id'		=> 'le_dropdown',
 			'name'		=> 'le_name5',
 			'label'		=> 'Un dropdown',
 			'value'		=> 3,
-<<<<<<< HEAD
-=======
 			'disabled'	=> TRUE,
->>>>>>> 213f5840962819c7cfab0f6cb1d95cf5c58234c3
 			'options'	=> array(
 				'1'	=> 'Opción',
 				'3'	=> 'Otra opción',
@@ -47,24 +40,17 @@ class Welcome extends CI_Controller {
 			)
 		));
 
-<<<<<<< HEAD
-		echo $this->cyforms->input_text->generate(array(
-=======
 		$this->load->helper('cyforms/cyforms');
 
 		echo generate_field('input_text', array(
->>>>>>> 213f5840962819c7cfab0f6cb1d95cf5c58234c3
 			'id'				=> 'element_id',
 			'label'				=> 'Campo con data attributes',
 			'name'				=> 'element_name',
 			'value'				=> 'Aloha',
 			'autofocus'			=> TRUE,
 			'placeholder'		=> 'Placeholder...',
-<<<<<<< HEAD
-=======
 			'help'				=> 'Un texto de ayuda sobre este campo en concreto.',
 			'error'				=> 'El campo dududuá es obligatorio.',
->>>>>>> 213f5840962819c7cfab0f6cb1d95cf5c58234c3
 			'data_attributes'	=> array(
 				'prueba'	=> 'wat',
 				'test'		=> '200'
@@ -94,6 +80,8 @@ class Welcome extends CI_Controller {
 				),
 			)
 		));
+
+		/* TEST */
 
 		/*echo $this->cyforms->select->generate(array(
 			'id'			=> 'le_checkbox',

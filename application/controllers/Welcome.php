@@ -81,6 +81,8 @@ class Welcome extends CI_Controller {
 			)
 		));
 
+		/* TEST */
+
 		/*echo $this->cyforms->select->generate(array(
 			'id'			=> 'le_checkbox',
 			'name'			=> 'le_name',

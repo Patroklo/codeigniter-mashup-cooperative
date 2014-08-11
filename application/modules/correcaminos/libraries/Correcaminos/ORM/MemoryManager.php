@@ -492,6 +492,7 @@
 		private $table;
 		private $columns;
 		private $joins;
+		private $files;
 		private $primary_column;
 		
 		function __construct($className)
@@ -514,6 +515,11 @@
 			else
 			{
 				$this->primary_column = 'id';
+			}
+			
+			if(array_key_exists('files', $classData))
+			{
+				$this->files = $classData['files'];
 			}
 			
 			$this->load_columns();
@@ -542,6 +548,11 @@
 		function get_joins()
 		{
 			return $this->joins;
+		}
+		
+		function get_files()
+		{
+			return $this->files;
 		}
 		
 		function get_className()
@@ -863,7 +874,7 @@
 				$this->delete_delete_object($object);
 			}	
 					
-			public function delete_delete_object($object_id, $table)
+			public function delete_delete_object($object)
 			{
 				$object_info = $this->get_object_data($object);
 				$object_id = $object_info['object_id'];

@@ -13,14 +13,39 @@ class base{
 			protected $_data = NULL;
 			
 			private $_state = NULL;
+			
+			protected $__object_loaded;
             
-            function __construct(&$data = NULL, $_new_object = FALSE)
+            function __construct($data = NULL, $_new_object = FALSE)
             {
+            	
+
                 $this->_data = $data;
+				
+				$this->__object_loaded = TRUE;
 				
 				if($_new_object == TRUE)
 				{
 					$this->_check_insert();
+
+					// we insert a blank empty object of the table
+					// in order to be able to use get_data and set_data
+					if(is_null($this->_data))
+					{
+						$this->__object_loaded = FALSE;
+						
+						$classData = $this->_classData();
+						
+						$columns = MemoryManager::get_table_data($classData['tableName']);
+
+						$this->_data = new \stdClass();
+						
+						foreach($columns as $column)
+						{
+							$fieldName = $column['Field'];
+							$this->_data->$fieldName = NULL;
+						}
+					}
 				}
             }
             
@@ -38,26 +63,35 @@ class base{
              
              /**
 			  * example:
-			 return array('tableName' => 'poblacion',
-                         	'joins' => array(	'provincia'		=> array('loading_type'			=>	'eager|lazy',
-	                         											 'type'					=>	'OneToOne',
-	                         											 'target'				=> 'provincia_object',
-	                         											 'columnName'			=> 'idprovincia',
-	                         											 'referencedColumnName'	=> 'idprovincia'
+			 return array('tableName' => (string) 'poblacion',
+                         	'joins' => array(	'provincia'		=> array('loading_type'			=>	(enum) 'eager|lazy',
+	                         											 'type'					=>	(enum) 'OneToOne|OneToMany|ManyToMany|OneToText',
+	                         											 'target'				=>  (string) (object name) 'provincia_object',
+	                         											 'columnName'			=>  (string) (column name in object) 'idprovincia',
+	                         											 'referencedColumnName'	=>  (string) (column name in target object)'idprovincia'
 							 											)
-			  									'prueba'	=> array('loading_type'			=>	'eager|lazy',
-	                         											 'type'					=>	'ManyToMany',
-	                         											 'target'				=> 'provincia_object',
-	                         											 'columnName'			=> 'idprovincia',
-	                         											 'referencedColumnName'	=> 'idprovincia',
-			  															 'intermediateTable'	=> 'tabla',
-			  															 'intermediateColumnName' => 'derp',
+			  									'prueba'	=> array('loading_type'							=>	(enum) 'eager|lazy',
+	                         											 'type'								=>	'ManyToMany', (enum) 'OneToOne|OneToMany|ManyToMany|OneToText',
+	                         											 'target'							=> (string) (object name) 'provincia_object',
+	                         											 'columnName'						=> (string) (column name in object) 'idprovincia',
+	                         											 'referencedColumnName'				=> (string) (column name in target object)'idprovincia'
+			  															 'intermediateTable'				=> (optional) (string) (table used in many to many) 'tabla',
+			  															 'intermediateColumnName' 			=> 'derp',
 			   															 'intermediatereferencedColumnName' => 'derp_derp'
 							 										)
-						 ),                                                                                                                                                                                                                                                                                                
+						 					),
+			  				 'files' => array( 'foto' 	=> array('directory' => (string) (object_name) 'foto_usuario',
+			   												 	 'className' => (optional) (string) //if not defined, will use the object's name),
+			  													 'rules'	 => (optional) (string, rules from CI)
+			  													)                                                                                                                                                                                                                                                                              
                          'primary_column' => 'idpoblacion');
 			  */
              
+             
+            function _object_loaded()
+			{
+				return $this->__object_loaded;
+			}
              
             static function _classData()
             {
@@ -66,8 +100,7 @@ class base{
             
             function get_data($field)
             {
-            	
-				if(isset($this->_data->$field))
+				if(property_exists($this->_data, $field))
 				{
 					return $this->_data->$field;
 				}
@@ -75,7 +108,7 @@ class base{
 				{
 					$classData = $this->_classData();
 					
-					if(array_key_exists($field, $classData['joins']))
+					if(array_key_exists('joins', $classData) && array_key_exists($field, $classData['joins']))
 					{
 
 						include_once CC_ROM_DEFINITION_PATH.'ORM_Relation_Manager.php';
@@ -103,6 +136,7 @@ class base{
 					}
 				}
             }
+
             
             function set_data($key, $data, $_change_state = TRUE)
             {
@@ -122,7 +156,6 @@ class base{
 			function save()
 			{
 				ORM_Operations::save_object($this);
-
 				$this->_state = NULL;
 			}
 
@@ -132,7 +165,7 @@ class base{
 				return $this->_state;
 			}
 			
-			private function _check_update()
+			protected function _check_update()
 			{
 				if(is_null($this->_state))
 				{
@@ -142,16 +175,16 @@ class base{
 				}
 			}
 			
-			private function _check_insert()
+			protected function _check_insert()
 			{
-				$this->_state == 'INSERT';
+				$this->_state = 'INSERT';
 
 				MemoryManager::add_insert_object($this);
 			}
 			
-			private function _check_delete()
+			protected function _check_delete()
 			{
-				$this->_state == 'DELETE';
+				$this->_state = 'DELETE';
 
 				MemoryManager::add_delete_object($this);
 			}
@@ -179,17 +212,5 @@ class base{
 					Warning::exception($msg);
 				}
 			}         
-               // function _insert_join($colName, $joinList)
-            // {
-                // $this->_joinList[$colName] = $joinList;
-            // }
-// 			
-// 			
-			// function fill_object($data)
-			// {
-				// foreach($data as $key => $d)
-				// {
-					// $this->$key = $d;
-				// }
-			// }         
+      
 }

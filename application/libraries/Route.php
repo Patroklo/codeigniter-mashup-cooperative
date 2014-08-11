@@ -615,11 +615,17 @@ class Route {
 	
 	static function get_subdomain()
 	{
+
 		if(is_null(self::$subdomain))
 		{
+			if(defined('ROUTE_DOMAIN_NAME') === FALSE)
+			{
+				define('ROUTE_DOMAIN_NAME', $_SERVER['HTTP_HOST']);	
+			}	
+					
 			self::$subdomain = preg_replace('/^(?:([^\.]+)\.)?'.ROUTE_DOMAIN_NAME.'$/', '\1', $_SERVER['HTTP_HOST']);
 		}
-		
+
 		return self::$subdomain;
 	}
 	

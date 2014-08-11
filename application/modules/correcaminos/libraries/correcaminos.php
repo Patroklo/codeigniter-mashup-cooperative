@@ -32,6 +32,7 @@ use Correcaminos\Database\Driver,
 			require_once 'Correcaminos/Parser.php';
 			require_once 'Correcaminos/QueryBox.php';
 			require_once 'Correcaminos/Cache/Lite.php';
+			require_once 'Correcaminos/ORM/ORM_Operations.php';
 
 			
 			require_once CC_OBJECT_DEFINITION_PATH.'d_data.php';
@@ -48,7 +49,7 @@ use Correcaminos\Database\Driver,
 			//caches *memcache, *apc *ramcache (this is only for the running script life) 
             $db_conn['memcache_on'] 	= FALSE;
 			$db_conn['apccache_on']		= FALSE;
-			$db_conn['inner_cache_on']	= TRUE;
+			$db_conn['inner_cache_on']	= FALSE;
 			$db_conn['filecache_on'] 	= FALSE;
 			$db_conn['memcache_expire'] = 300;
 			
@@ -97,6 +98,12 @@ use Correcaminos\Database\Driver,
         {
             MemoryManager::load_object($class);
         }
+		
+		public function new_object($object)
+		{
+			$this->load_object($object);
+			return new $object(NULL, TRUE);
+		}
         
 		/*
 		 *  Active Record Query
@@ -118,7 +125,7 @@ use Correcaminos\Database\Driver,
 			{
 				require_once 'Correcaminos/ORM/ORM_QueryBuilder.php';      
 				require_once 'Correcaminos/ORM/ORM_Facade_QueryBuilder.php';
-				require_once 'Correcaminos/ORM/ORM_Operations.php';
+				
 				$this->ORM_INIT = TRUE;
 			}
 

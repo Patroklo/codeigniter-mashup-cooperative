@@ -4,7 +4,6 @@
 
 		TODO:
 		error handling
-		help text
 
 	*/
 
@@ -38,6 +37,9 @@
 		protected $value;
 		protected $label;
 		protected $placeholder;
+		protected $help;
+		protected $error;
+		protected $errors;
 		protected $disabled;		// boolean
 		protected $readonly;		// boolean
 		protected $autofocus;		// boolean
@@ -82,11 +84,11 @@
 			{
 				$this->name = $this->id;
 			}
- 
+
  			$array_eliminar = array('wrapper', 'wrapper_view', 'view_data', 'view_path', 'form_field_type', '_ci');
-			
+
 			$this->view_data = get_object_vars($this);
-			
+
 			foreach($array_eliminar as $fijo)
 			{
 				unset($this->view_data[$fijo]);
@@ -96,30 +98,30 @@
 
 
 			$this->view_data['attributes']	= array();
-			
+
 			foreach ($this->data_attributes as $key => $d)
 			{
 				$this->view_data['attributes'][] = 'data-'.$key.'="'.$d.'"';
 			}
-			
+
 			unset($this->view_data['data_attributes']);
 
-			$array_attributes = array('placeholder'	=> 'placeholder="'.$this->placeholder.'"', 
-									  'disabled'	=> 'disabled', 
-									  'readonly'	=> 'readonly', 
-									  'autofocus'	=> 'autofocus', 
+			$array_attributes = array('placeholder'	=> 'placeholder="'.$this->placeholder.'"',
+									  'disabled'	=> 'disabled',
+									  'readonly'	=> 'readonly',
+									  'autofocus'	=> 'autofocus',
 									  'extra'		=> $this->extra);
-			
+
 			foreach($array_attributes as $attr => $value)
 			{
 				unset($this->view_data[$attr]);
-				
+
 				if($this->{$attr})
 				{
 					$this->view_data['attributes'][] = $value;
 				}
 			}
-			
+
 			$this->view_data['attributes'] = implode(' ', $this->view_data['attributes']);
 
 		}
@@ -226,7 +228,7 @@
 		 *
 		 * @return HTML
 		 */
-		 
+
 		public function generate($options = NULL)
 		{
 			if (!is_null($options))
@@ -271,7 +273,6 @@
 	{
 
 		protected $form_field_type = 'select';
-		protected $option_values;
 
 		/**
 		 * checks additional options for the select field
@@ -281,13 +282,11 @@
 
 		protected function check_data()
 		{
-
-			if (is_null($this->view_data['option_values']))
+			if (is_null($this->view_data['options']))
 			{
 				$this->exception('The select field doesn\'t have any defined options.');
 				return FALSE;
 			}
-
 			return parent::check_data();
 		}
 
@@ -306,13 +305,6 @@
 
 		protected $form_field_type = 'radio';
 		protected $options	= FALSE;
-
-	}
-
-	class dropdown extends Cyform_field_base
-	{
-
-		protected $form_field_type = 'dropdown';
 
 	}
 

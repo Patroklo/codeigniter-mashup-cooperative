@@ -11,6 +11,8 @@
 		
 		protected $callbacks;
 		
+		protected $callback_response = TRUE;
+		
 		protected $error = FALSE;
 		
 		function __construct($options = array())
@@ -31,6 +33,7 @@
 		 * 		[help_text]
 		 * 		[value]
 		 * 		[options]	=> for extra options in special fields
+		 * 				[callbacks]	(array) [before/after] => callback list
 		 *
 		 * @return void
 		 * @author  Patroklo
@@ -45,12 +48,11 @@
 					if(!array($callback_type))
 					{
 						$callback_type = array($callback_type);
-						$key = 'before';
 					}
 					
 					foreach($callback_type as $callback)
 					{
-						$this->callbacks[$key] = $callback;
+						$this->callbacks[$key][] = $callback;
 					}
 				}
 				
@@ -75,6 +77,16 @@
 		function get_options()
 		{
 			return $this->options;
+		}
+		
+		function get_parameter($parameter_name)
+		{
+			if(isset($this->{$parameter_name}))
+			{
+				return $this->{$parameter_name};
+			}
+			
+			return FALSE;
 		}
 		
 		function get_field($extra_data){}
@@ -121,9 +133,9 @@
 		
 		function set_error($error)
 		{
-			if(!empty($error))
+			foreach($error as $err)
 			{
-				$this->error = $error;
+				$this->error[] = $err;
 			}
 		}
 		
@@ -138,7 +150,6 @@
 		{
 			$this->execute_callback_list($this->callbacks['before']);
 			$return_data = $this->get_field($extra_data);
-			$this->execute_callback_list($this->callbacks['after']);
 			return $return_data;
 		}
 		

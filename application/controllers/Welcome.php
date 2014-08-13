@@ -10,7 +10,8 @@ class Welcome extends CI_Controller {
 			'id'			=> 'id_campo',
 			'label'			=> 'Campo de prueba',
 			'placeholder'	=> 'Un placeholder',
-			'name'			=> 'name_campo'
+			'name'			=> 'name_campo',
+			'value'			=> 'derpy'
 		))->generate();
 
 		echo $this->cyforms->datepicker->generate(array(
@@ -94,6 +95,47 @@ class Welcome extends CI_Controller {
 		));*/
 
 	}
+
+	public function prueba_forms()
+	{
+		$this->load->library('correcaminos/correcaminos');
+		$this->load->helper('correcaminos/correcaminos');
+		
+		$this->load->model('cy_upload/Orm_upload_operations');
+		$this->load->model('Prueba_formulario_model');
+
+		if($this->uri->segment('id'))
+		{
+			$user = $this->correcaminos->beep('user_object')->where('id',$this->uri->segment('id'))->get_one();
+			
+			if(empty($user))
+			{
+				show_404();
+			}
+
+			$this->Prueba_formulario_model->carga('user_object', $user);
+	 	}
+
+
+		$this->Prueba_formulario_model->valid();
+			
+		$this->load->view('myform');
+	}
+
+	 public function password_check($str)
+	 {
+	 	return TRUE;
+	 	if($this->input->post('password') != $str)
+		{
+			$this->form_validation->set_message('password_check', 'la contraseña debe ser puto igual en ambos campos');
+			return FALSE;
+		}
+		else 
+		{
+			 return TRUE;
+		}
+	 }
+
 
 }
 

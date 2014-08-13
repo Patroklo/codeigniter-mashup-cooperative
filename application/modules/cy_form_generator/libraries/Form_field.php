@@ -5,7 +5,7 @@
 		protected $id;
 		protected $name;
 		protected $rules;
-		protected $help_text;
+		protected $label;
 		protected $value;
 		protected $options = array();
 		
@@ -20,7 +20,6 @@
 			$this->callbacks = array('before'  => array(), 'after' => array());
 			
 			$this->set_options($options);
-			
 		}
 		
 		/**
@@ -45,7 +44,7 @@
 			{
 				foreach($options['callbacks'] as $key => $callback_type)
 				{
-					if(!array($callback_type))
+					if(!is_array($callback_type))
 					{
 						$callback_type = array($callback_type);
 					}
@@ -133,9 +132,14 @@
 		
 		function set_error($error)
 		{
+			if(is_string($error))
+			{
+				$error = array($error);
+			}
+			
 			foreach($error as $err)
 			{
-				$this->error[] = $err;
+				$this->error.= $err;
 			}
 		}
 		
@@ -158,15 +162,37 @@
 			return $this->error;
 		}
 		
+		function execute_callbacks($type)
+		{
+			if($this->callbacks != NULL)
+			{
+				if(array_key_exists($type, $this->callbacks))
+				{
+					return $this->execute_callback_list($this->callbacks[$type]);
+				}
+			}
+		}
+		
+		
 		function execute_callback_list($callbacks)
 		{
+			$return_data = FALSE;
+			
 			if(is_array($callbacks))
 			{
 				foreach($callbacks as $callback)
 				{
-					$this->execute_callback($callback);
+					$r_d = $this->execute_callback($callback);
+					
+					if($r_d)
+					{
+						$return_data[] = $r_d;
+					}
 				}
 			}
+			
+			return $return_data;
+			
 		}
 		
 		/**
@@ -180,12 +206,14 @@
 		{
 			if(is_callable($callback))
 			{
-				$data = call_user_func($callback);
+				$data = call_user_func($callback, $this);
 				
 				if(is_array($data))
 				{
 					$this->set_options($data);
 				}
+				
+				return $data;
 			}
 		}
 		
@@ -407,21 +435,36 @@
 		function __construct($options)
 		{
 			parent::__construct($options);
-			$CI =& get_instance();
+			$this->_CI =& get_instance();
 			
-			$CI->load->helper('cy_forms/form');
+			$this->_CI->load->library('cyforms/Cyforms');
+			
 		}
 		
-		function get_options($extra_data = array())
+		function get_options()
 		{
-			$return_data 			= $extra_data + $this->options;
-			$return_data['id'] 		= $this->id;
-			$return_data['label'] 	= $this->name;
-			$return_data['help'] 	= $this->help_text;
-			$return_data['value']	= set_value($return_data['id'], $this->value);
 			
-			return $return_data;
+			$basic_data = $this->options;
+			
+			if(array_key_exists('data', $basic_data))
+			{
+				$basic_data['options'] = $basic_data['data'];
+				unset($basic_data['data']);
+			}
+			
+			$basic_data['id'] 		= $this->id;
+			$basic_data['label']	= $this->label;
+			$basic_data['name']		= $this->name;
+			$basic_data['value'] 	= $this->value;
+			
+			if(!$this->error == FALSE)
+			{
+				$basic_data['error'] = $this->error;
+			}
+
+			return $basic_data;
 		}
+		
 	}
 	
 
@@ -430,8 +473,8 @@
 	 * 
 	 */
 	 
-	 class Bootstrap_form {
-	 	
+	class Bootstrap_form 
+	{
 		
 		protected $submit_text;
 		
@@ -458,7 +501,7 @@
 	 	
 		function start_form()
 		{
-			return form_open();
+			return form_open_multipart();
 		}
 		
 		function submit_button()
@@ -471,26 +514,86 @@
 			return form_close();
 		}
 		
-	 }
+		function show_errors($errors)
+		{
+			$return_html = '<p>';
+				
+				foreach($errors as $error)
+				{
+					$return_html.= $error;
+				}
+			$return_html.= '</p>';
+			
+			return $return_html;
+		}
+		
+	}
+
 	
 	
 	class Text_Bootstrap_field extends Form_Bootstrap 
 	{
 		function get_field($extra_data = array())
 		{
-			$extra_data =  $extra_data + array('type' => 'text');
-			
-			return summon_input($this->get_options($extra_data));
+			return $this->_CI->cyforms->input_text->options($this->get_options())->generate();
 		}
 	}
 	
-	class Textarea_Bootstrap_field extends Form_Bootstrap
+	class Password_Bootstrap_field extends Form_Bootstrap 
 	{
 		function get_field($extra_data = array())
 		{
-			$extra_data = $extra_data + array('wysiwyg' => TRUE);
+			$options = $this->get_options();
+			unset($options['value']);
 			
-			return summon_textarea($this->get_options($extra_data));
+			return $this->_CI->cyforms->password->options($options)->generate();
 		}
 	}
+	
+	class Checkbox_Bootstrap_field extends Form_Bootstrap
+	{
+		
+		function get_field($extra_data = array())
+		{
+			$options = $this->get_options();
+			
+			if($this->value)
+			{
+				$options['checked'] = TRUE;
+			}
+			
+			return $this->_CI->cyforms->checkbox->options($options)->generate();
+		}
+	}
+
+
+	class Select_Bootstrap_field extends Form_Bootstrap
+	{
+		function get_field($extra_data = array())
+		{
+			return $this->_CI->cyforms->select->options($this->get_options())->generate();
+		}
+	}
+
+	class Radio_Bootstrap_field extends Form_Bootstrap
+	{
+		function get_field($extra_data = array())
+		{
+			return $this->_CI->cyforms->radio->options($this->get_options())->generate();
+		}
+	}
+
+	class Datepicker_Bootstrap_field extends Form_Bootstrap
+	{
+		function get_field($extra_data = array())
+		{
+			return $this->_CI->cyforms->datepicker->options($this->get_options())->generate();
+		}
+	}
+
+
+
+
+
+
 

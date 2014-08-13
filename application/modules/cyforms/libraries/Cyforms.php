@@ -267,12 +267,18 @@
 		protected $form_field_type = 'input_text';
 
 	}
+	
+	class password extends Cyform_field_base
+	{
+		protected $form_field_type = "password";
+	}
 
 
 	class select extends Cyform_field_base
 	{
 
 		protected $form_field_type = 'select';
+		protected $options;
 
 		/**
 		 * checks additional options for the select field
@@ -304,8 +310,24 @@
 	{
 
 		protected $form_field_type = 'radio';
-		protected $options	= FALSE;
+		protected $options;
 
+		/**
+		 * checks additional options for the select field
+		 *
+		 * @return void
+		 */
+
+		protected function check_data()
+		{
+			if (is_null($this->view_data['options']))
+			{
+				$this->exception('The select field doesn\'t have any defined options.');
+				return FALSE;
+			}
+			return parent::check_data();
+		}
+		
 	}
 
 	class datepicker extends Cyform_field_base

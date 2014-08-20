@@ -1,24 +1,16 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Derp extends CI_Controller {
+class Derp extends AJAX_Controller {
+
 
 	public function index()
 	{
 
-		$this->load->library('cyforms/cyforms');
-
-		echo $this->cyforms->field('derp', array(
-			'id'				=> 'element_id',
-			'name'				=> 'element_name',
-			'value'				=> 'Aloha',
-			'data_attributes'	=> array(
-				'prueba'	=> 'wat',
-				'test'		=> '200'
-			)
-		));
-
-		echo 'Testing.';
+		$this->correcaminos;
+			echo '<pre>';
+			  echo var_dump('variable');
+			echo '</pre>';
 
 	}
 

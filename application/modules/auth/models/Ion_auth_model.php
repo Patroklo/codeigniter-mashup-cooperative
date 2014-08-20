@@ -126,7 +126,6 @@ class Ion_auth_model extends CI_Model
 	public function __construct()
 	{
 		parent::__construct();
-		$this->load->database();
 		$this->load->config('ion_auth', TRUE);
 		$this->load->helper('cookie');
 		$this->load->helper('date');
@@ -191,14 +190,15 @@ class Ion_auth_model extends CI_Model
 			if ($this->random_rounds)
 			{
 				$rand = rand($this->min_rounds,$this->max_rounds);
-				$rounds = array('rounds' => $rand);
+				$params = array('rounds' => $rand);
 			}
 			else
 			{
-				$rounds = array('rounds' => $this->default_rounds);
+				$params = array('rounds' => $this->default_rounds);
 			}
 			
-			$this->load->library('auth/bcrypt',$rounds);
+			$params['salt_prefix'] = $this->config->item('salt_prefix', 'ion_auth');
+			$this->load->library('auth/bcrypt',$params);
 		}
 
 		$this->load->config('auth/adapted_ion_auth', TRUE);
@@ -737,6 +737,8 @@ class Ion_auth_model extends CI_Model
 
 		$this->trigger_events('extra_where');
 
+		$key = str_replace('/', '', $key);
+
 		$update = array(
 		    'forgotten_password_code' => $key,
 		    'forgotten_password_time' => time()
@@ -903,6 +905,12 @@ class Ion_auth_model extends CI_Model
 	{
 		$login_identities = explode(' ', $identity);
 		
+		if(count($login_identities) > 2)
+		{
+			$this->set_error('login_unsuccessful');
+			return FALSE;
+		}
+		
 		$admin_identity = $login_identities[1];
 		$identity = $login_identities[0];
 		
@@ -986,7 +994,7 @@ class Ion_auth_model extends CI_Model
 	
 	private function _login($identity, $password, $remember=FALSE)
 	{
-		$query = $this->_query_login($identity);
+		
 
 		if($this->is_time_locked_out($identity))
 		{
@@ -998,6 +1006,8 @@ class Ion_auth_model extends CI_Model
 
 			return FALSE;
 		}
+
+		$query = $this->_query_login($identity);
 
 		if ($query->num_rows() === 1)
 		{
@@ -1017,7 +1027,6 @@ class Ion_auth_model extends CI_Model
 				}
 				
 				return FALSE;
-
 			}
 		}
 
@@ -1481,13 +1490,13 @@ class Ion_auth_model extends CI_Model
 			}
 
 			set_cookie(array(
-			    'name'   => 'identity',
+			    'name'   => $this->config->item('identity_cookie_name', 'ion_auth'),
 			    'value'  => $user->get_data($this->identity_column),
 			    'expire' => $expire
 			));
 
 			set_cookie(array(
-			    'name'   => 'remember_code',
+			    'name'   => $this->config->item('remember_cookie_name', 'ion_auth'),
 			    'value'  => $salt,
 			    'expire' => $expire
 			));
@@ -1511,7 +1520,9 @@ class Ion_auth_model extends CI_Model
 		$this->trigger_events('pre_login_remembered_user');
 
 		//check for valid data
-		if (!get_cookie('identity') || !get_cookie('remember_code') || !$this->identity_check(get_cookie('identity')))
+		if (!get_cookie($this->config->item('identity_cookie_name', 'ion_auth'))
+		|| !get_cookie($this->config->item('remember_cookie_name', 'ion_auth'))
+		|| !$this->identity_check(get_cookie($this->config->item('identity_cookie_name', 'ion_auth'))))
 		{
 			$this->trigger_events(array('post_login_remembered_user', 'post_login_remembered_user_unsuccessful'));
 			return FALSE;
@@ -1520,8 +1531,8 @@ class Ion_auth_model extends CI_Model
 		//get the user
 		$this->trigger_events('extra_where');
 		$query = $this->db->select($this->identity_column.', id, username, email, last_login')
-		                  ->where($this->identity_column, get_cookie('identity'))
-		                  ->where('remember_code', get_cookie('remember_code'))
+		                  ->where($this->identity_column, get_cookie($this->config->item('identity_cookie_name', 'ion_auth')))
+		                  ->where('remember_code', get_cookie($this->config->item('remember_cookie_name', 'ion_auth')))
 		                  ->limit(1)
 		                  ->get($this->tables['users']);
 
@@ -1607,7 +1618,7 @@ class Ion_auth_model extends CI_Model
 
 			// bail if the group name already exists
 			$existing_group = $this->db->get_where($this->tables['groups'], array('name' => $group_name))->row();
-			if($existing_group->id && $existing_group->id != $group_id)
+			if($existing_group != FALSE && $existing_group->id != $group_id)
 			{
 				$this->set_error('group_already_exists');
 				return FALSE;

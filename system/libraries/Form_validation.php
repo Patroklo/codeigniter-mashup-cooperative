@@ -603,7 +603,7 @@ class CI_Form_validation {
 						break;
 					}
 				}
-				elseif (is_callable($rule))
+				elseif (is_callable($rule) OR (is_array($rule) && is_callable($rule[1])))
 				{
 					$callback = TRUE;
 					$rules = array(1 => $rule);
@@ -697,7 +697,7 @@ class CI_Form_validation {
 					$callback = TRUE;
 				}
 			}
-			elseif (is_callable($rule))
+			elseif (is_callable($rule) OR (is_array($rule) && is_callable($rule[1])))
 			{
 				$callable = TRUE;
 			}
@@ -729,9 +729,22 @@ class CI_Form_validation {
 				}
 				else
 				{
+					// If rule is callable can still have a name in order
+					// to be able to use callables to validate fields
+					if(!is_callable($rule))
+					{
+						$rule_name 	= $rule[0];
+						$rule		= $rule[1];
+					}
+					
 					$result = is_array($rule)
-						? $rule[0]->{$rule[1]}($postdata, $param)
-						: $rule($postdata, $param);
+							? $rule[0]->{$rule[1]}($postdata, $param)
+							: $rule($postdata, $param);
+					
+					if(isset($rule_name))
+					{
+						$rule = $rule_name;
+					}
 				}
 
 				// Re-assign the result to the master data array
@@ -794,7 +807,7 @@ class CI_Form_validation {
 				// Callable rules don't have named error messages
 				if ( ! is_string($rule))
 				{
-					return;
+					continue;
 				}
 
 				// Check if a custom message is defined

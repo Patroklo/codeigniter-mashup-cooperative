@@ -76,38 +76,22 @@
 														array('id'		=> 'password_2',
 															  'options'	=> array(
 															  					 'type'		=> 'Password',
-																				 'rules'	=> array('insert' => 'required|callback_password_check',
-																				 					 'update' => array('callback_password_check',
-																				 					 			function($value1, $value2){
-																				 					
-																				 					 		$this->form_validation->set_message('password_chek', 'Error Message');
-																										
-																												  return FALSE;
-																				 					 })),
+																				 'rules'	=>  array(
+																				 					 
+																				 					 array( 'password_mistmatch',
+																				 					 		function(){
+
+																				 					 			if($this->input->post('password') == $this->input->post('password_2'))
+																												{
+																													return TRUE;
+																												}
+																												$this->form_validation->set_message('password_mistmatch', 'Error Message');
+																												return FALSE;
+																				 					 		})
+                                                                                                    ),
 																				 'label'		=> 'Repite la contraseña',
 															  					)
 															  ),
-														array('id'		=> 'prueba_select',
-															  'options'	=> array(
-															  					 'type'		=> 'Select',
-															  					 'rules'	=> '',
-															  					 'label'	=> 'selecciona algo, ostia!',
-															  					 //'data'		=> array('a','b')
-															  					 'callbacks' => array('before' => function($obj) {
-																														return array('data' => array('a', 'b'));
-																				  					 				},
-																				  					  'after' => function($obj)
-																									  {
-																											 
-																												 echo '<pre>';
-																												   echo var_dump($_POST);
-																												 echo '</pre>';
-																												 return 'Este es un error manual desde función anónima';
-																									  }
-																									 )
-																				 
-															  					)
-															  ),	
 														/*array('id'		=> 'userfile',
 															  'options' => array(
 															  					 'type'			=> 'Upload',
@@ -123,6 +107,14 @@
 			
 			parent::form_definition($options);
 		 }
+
+        function derp()
+        {
+            
+                echo '<pre>';
+                  echo var_dump('entra a derp');
+                echo '</pre>';
+        }
 			
 		protected function update($object_key)
 		{

@@ -85,7 +85,7 @@ $autoload['packages'] = array();
 |	$autoload['libraries'] = array('user_agent' => 'ua');
 */
 
-$autoload['libraries'] = array('template');
+$autoload['libraries'] = array('correcaminos/Correcaminos', 'correcaminos/CI_db_parser', 'auth/Auth');
 
 
 /*
@@ -113,7 +113,7 @@ $autoload['drivers'] = array();
 |	$autoload['helper'] = array('url', 'file');
 */
 
-$autoload['helper'] = array();
+$autoload['helper'] = array('correcaminos/correcaminos');
 
 
 /*

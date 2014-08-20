@@ -10,6 +10,8 @@
 		protected $options = array();
 		
 		protected $callbacks;
+		protected $rules_callables;
+		
 		
 		protected $callback_response = TRUE;
 		
@@ -112,22 +114,45 @@
 		
 		function get_rules($loaded = NULL)
 		{
-			if(!is_array($this->rules))
-			{
-				return $this->rules;
-			}
 			
-			if($loaded == NULL)
+			$return_rule = NULL;
+
+			if (!is_array($this->rules) or 
+				(!array_key_exists('update', $this->rules) and !array_key_exists('insert', $this->rules)))
 			{
-				$loaded = FALSE;
+				$return_rule = $this->rules;
 			}
-			
-			if($loaded == TRUE)
+			else
 			{
-				return $this->rules['update'];
+				if ($loaded == NULL)
+				{
+					$loaded = FALSE;
+				}
+				
+				if ($loaded == TRUE)
+				{
+					$return_rule = $this->rules['update'];
+				}
+				else
+				{
+					$return_rule = $this->rules['insert'];
+				}
 			}
-			
-			return $this->rules['insert'];
+
+			// if there is a callable defined then we will
+			// always send it
+			if (!empty($this->rules_callables))
+			{
+				if (!is_array($return_rule))
+				{
+					$return_rule = explode('|', $return_rule);
+				}
+				
+				$return_rule = array_merge($return_rule, $this->rules_callables);
+			}
+
+			return $return_rule;
+
 		}
 		
 		function set_error($error)

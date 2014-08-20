@@ -59,7 +59,22 @@ class Ion_auth
 	 **/
 	public function __construct()
 	{
+		$this->load->library('email');
+		$this->lang->load('ion_auth', '', FALSE, TRUE, '', 'auth');
+		$this->load->helper('cookie');
+		$this->load->helper('language');
+		$this->load->helper('url');
+		$this->load->model('auth/ion_auth_model');
+		
 		$this->_cache_user_in_group =& $this->ion_auth_model->_cache_user_in_group;
+
+		$email_config = $this->config->item('email_config', 'ion_auth');
+
+		if ($this->config->item('use_ci_email', 'ion_auth') && isset($email_config) && is_array($email_config))
+		{
+			$this->email->initialize($email_config);
+		}
+
 	}
 
 
@@ -87,8 +102,8 @@ class Ion_auth
 			if ($user)
 			{
 				$data = array(
-					'identity'		=> $user->{$this->config->item('identity', 'ion_auth')},
-					'forgotten_password_code' => $user->forgotten_password_code
+					'identity'		=> $user->get_data($this->config->item('identity', 'ion_auth')),
+					'forgotten_password_code' => $user->get_data('forgotten_password_code')
 				);
 
 				if(!$this->config->item('use_ci_email', 'ion_auth'))
@@ -98,10 +113,11 @@ class Ion_auth
 				}
 				else
 				{
+
 					$message = $this->load->view($this->config->item('email_templates', 'ion_auth').$this->config->item('email_forgot_password', 'ion_auth'), $data, true);
 					$this->email->clear();
 					$this->email->from($this->config->item('admin_email', 'ion_auth'), $this->config->item('site_title', 'ion_auth'));
-					$this->email->to($user->email);
+					$this->email->to($user->get_data('email'));
 					$this->email->subject($this->config->item('site_title', 'ion_auth') . ' - ' . $this->lang->line('email_forgotten_password_subject'));
 					$this->email->message($message);
 
@@ -214,7 +230,7 @@ class Ion_auth
 			if ($this->config->item('forgot_password_expiration', 'ion_auth') > 0) {
 				//Make sure it isn't expired
 				$expiration = $this->config->item('forgot_password_expiration', 'ion_auth');
-				if (time() - $profile->forgotten_password_time > $expiration) {
+				if (time() - $profile->get_data('forgotten_password_time') > $expiration) {
 					//it has expired
 					$this->clear_forgotten_password_code($code);
 					$this->ion_auth_model->set_error('password_change_unsuccessful');
@@ -286,7 +302,7 @@ class Ion_auth
 			{
 				$this->ion_auth_model->trigger_events(array('post_account_creation', 'post_account_creation_successful', 'activation_email_successful'));
 				$this->ion_auth_model->set_message('activation_email_successful');
-					return $data;
+				return $data;
 			}
 			else
 			{

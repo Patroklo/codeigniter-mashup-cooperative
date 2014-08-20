@@ -96,10 +96,6 @@ class Cy_base_form_model extends CI_Model
 	 function form_definition($options = array())
 	 {
 	 	// all the data defined as in the previous comments
-	 	
-	 	$local_options = array();
-		
-		$options = array_merge($options, $local_options);
 
 		$this->set_options($options);
 	 }

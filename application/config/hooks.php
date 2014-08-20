@@ -41,19 +41,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * FILTER HOOKS. CALLED FOR FILTER CLOSURES FROM ROUTES
  */
 
-$hook['pre_controller'] = array(
-                                'class'    => 'Filters',
-                                'function' => 'before',
-                                'filename' => 'Filters.php',
-                                'filepath' => 'hooks',
-                                );
 
-$hook['post_controller'] = array(
-                                'class'    => 'Filters',
-                                'function' => 'after',
-                                'filename' => 'Filters.php',
-                                'filepath' => 'hooks',
-                                );
 
 /* End of file hooks.php */
 /* Location: ./application/config/hooks.php */

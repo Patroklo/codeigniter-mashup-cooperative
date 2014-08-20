@@ -442,6 +442,8 @@ class MY_Loader extends CI_Loader {
 
             // Load the controller file
             if (file_exists($filepath)) {
+            	
+				$this->_include_class('core/AJAX_Controller.php');
                 include_once ($filepath);
             }
 
@@ -449,6 +451,12 @@ class MY_Loader extends CI_Loader {
             if (!class_exists($class)) {
                 show_404("{$class}/{$method}");
             }
+			
+			// Controller class MUST BE EXTENDED FROM AJAX_Controller
+			if(get_parent_class($class) != 'AJAX_Controller')
+			{
+				throw new Exception("The controller ".$class." must extend AJAX_Controller.", 1);
+			}
 
             // Create a controller object
             $this->_ci_controllers[strtolower($class)] = new $class();
@@ -461,6 +469,14 @@ class MY_Loader extends CI_Loader {
             show_404("{$class}/{$method}");
         }
 
+		// _remap must be called, if it exists, to mantain integrity 
+		// with standard Codeigniter controller calls.
+		if(method_exists($controller, '_remap'))
+		{
+			array_unshift($params, $method);
+			$method = '_remap';
+		}
+
         // Restore router state
         foreach ($backup as $prop => $value) {
             $router->{$prop} = $value;
@@ -468,7 +484,7 @@ class MY_Loader extends CI_Loader {
 
         // Capture output and return
         ob_start();
-        $result = call_user_func_array(array($controller, $method), $params);
+        $result = call_user_func_array(array(&$controller, $method), $params);
 
         // Return the buffered output
         if ($return === TRUE) {
@@ -622,6 +638,7 @@ class MY_Loader extends CI_Loader {
 	
 	private function _include_class_load($class)
 	{
+		$class = str_replace('.php', '', $class);
 		
 		// Was the path included with the class name?
 		// We look for a slash to determine this
@@ -641,7 +658,8 @@ class MY_Loader extends CI_Loader {
 		if (!class_exists($class)) 
 		{
 			$subclass = APPPATH.$subdir.config_item('subclass_prefix').$class.'.php';
-			
+		
+
 			if(file_exists($subclass))
 			{
 				include_once($subclass);

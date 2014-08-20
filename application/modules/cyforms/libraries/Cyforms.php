@@ -4,6 +4,7 @@
 
 		TODO:
 		error handling
+		style attribute
 
 	*/
 
@@ -267,10 +268,10 @@
 		protected $form_field_type = 'input_text';
 
 	}
-	
+
 	class password extends Cyform_field_base
 	{
-		protected $form_field_type = "password";
+		protected $form_field_type = "input_password";
 	}
 
 
@@ -327,7 +328,7 @@
 			}
 			return parent::check_data();
 		}
-		
+
 	}
 
 	class datepicker extends Cyform_field_base

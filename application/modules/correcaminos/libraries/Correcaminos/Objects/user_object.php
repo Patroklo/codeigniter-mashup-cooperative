@@ -1,21 +1,22 @@
 <?php
 
-    class user_object extends extended_base_object{
+    class user_object extends Correcaminos\Objects\base{
         
 		private $is_admin = NULL;
+		private $group_names;
         
         static function _classData()
         {
             return array('tableName' => 'users',
-                     'joins' => array('groups'	=> array('loading_type'			=> 'lazy',
-             											 'type'					=> 'OneToMany',
-             											 'target'				=> 'group_object',
-             											 'columnName'			=> 'id',
-             											 'referencedColumnName'	=> 'id',
-             											 'intermediateTable'	=> 'users_groups',
-  														 'intermediateColumnName' => 'user_id',
-   														 'intermediatereferencedColumnName' => 'group_id'
-			 											)
+	                     'joins' => array('groups'	=> array('loading_type'			=> 'lazy',
+	             											 'type'					=> 'OneToMany',
+	             											 'target'				=> 'group_object',
+	             											 'columnName'			=> 'id',
+	             											 'referencedColumnName'	=> 'id',
+	             											 'intermediateTable'	=> 'users_groups',
+	  														 'intermediateColumnName' => 'user_id',
+	   														 'intermediatereferencedColumnName' => 'group_id'
+				 											)
 						 ),
 		  				/* 'files' => array( 'user_photo_object' 	=> array('directory' => 'foto_usuario',
 																	 	 'className' => 'Prueba',
@@ -49,34 +50,43 @@
 			$admin_group = $CI->config->item('admin_group', 'ion_auth');
 			
 			$this->is_admin = FALSE;
-
-			foreach($this->get_data('groups') as $group)
+			
+			$groups = $this->__get_group_names();
+			
+			if(in_array($admin_group, $groups))
 			{
-				if($group->get_data('name') == $admin_group)
-				{
-					$this->is_admin = TRUE;
-					return TRUE;
-				}
+				$this->is_admin = TRUE;
 			}
 
 			return $this->is_admin;
 			
 		}
 
+		private function __get_group_names()
+		{
+			
+			if(is_null($this->group_names))
+			{
+				$this->group_names = array();
+				
+				foreach($this->get_data('groups') as $group)
+				{
+					$this->group_names[$group->get_data('id')] = $group->get_data('name');
+				}
+			}
+			
+			return $this->group_names;
+		}
 
 		public function in_group($check_group, $check_all = false)
 		{
-			if(!$this->logged_in())
-			{
-				return FALSE;
-			}
 
 			if (!is_array($check_group))
 			{
 				$check_group = array($check_group);
 			}
 	
-			$groups_array = $this->get_data('groups');
+			$groups_array = $this->__get_group_names();
 
 			foreach ($check_group as $key => $value)
 			{

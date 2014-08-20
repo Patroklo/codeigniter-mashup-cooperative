@@ -127,6 +127,10 @@ class base{
                         {
                             $this->set_data($field, $join_data[$this->get_data($classData['joins'][$field]['columnName'])], FALSE);
                         }
+						else
+						{
+							$this->set_data($field, array());
+						}
 						
 						return $this->_data->$field;
 					}

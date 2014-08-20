@@ -1,10 +1,14 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Welcome extends CI_Controller {
+class Welcome extends MY_Controller {
+
 
 	public function index()
 	{
-
+		$this->load->controller('Derp');
+		
+		
+		
 		$this->load->library('cyforms/Cyforms');
 		echo $this->cyforms->input_text->options(array(
 			'id'			=> 'id_campo',
@@ -98,6 +102,9 @@ class Welcome extends CI_Controller {
 
 	public function prueba_forms()
 	{
+		
+
+		
 		$this->load->library('correcaminos/correcaminos');
 		$this->load->helper('correcaminos/correcaminos');
 		
@@ -124,7 +131,7 @@ class Welcome extends CI_Controller {
 
 	 public function password_check($str)
 	 {
-	 	return TRUE;
+	 	
 	 	if($this->input->post('password') != $str)
 		{
 			$this->form_validation->set_message('password_check', 'la contraseña debe ser puto igual en ambos campos');

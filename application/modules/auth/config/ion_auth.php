@@ -23,31 +23,6 @@
 
 /*
 | -------------------------------------------------------------------------
-| Database Type
-| -------------------------------------------------------------------------
-| If set to TRUE, Ion Auth will use MongoDB as its database backend.
-|
-| If you use MongoDB there are two external dependencies that have to be
-| integrated with your project:
-|   CodeIgniter MongoDB Active Record Library - http://github.com/alexbilbie/codeigniter-mongodb-library/tree/v2
-|   CodeIgniter MongoDB Session Library - http://github.com/sepehr/ci-mongodb-session
-*/
-$config['use_mongodb'] = FALSE;
-
-/*
-| -------------------------------------------------------------------------
-| MongoDB Collection.
-| -------------------------------------------------------------------------
-| Setup the mongodb docs using the following command:
-| $ mongorestore sql/mongo
-|
-*/
-$config['collections']['users']          = 'users';
-$config['collections']['groups']         = 'groups';
-$config['collections']['login_attempts'] = 'login_attempts';
-
-/*
-| -------------------------------------------------------------------------
 | Tables.
 | -------------------------------------------------------------------------
 | Database table names.
@@ -86,12 +61,16 @@ $config['join']['groups'] = 'group_id';
  |
  | Be careful how high you set max_rounds, I would do your own testing on how long it takes
  | to encrypt with x rounds.
+ |
+ | salt_prefix: Used for bcrypt. Versions of PHP before 5.3.7 only support "$2a$" as the salt prefix
+ | Versions 5.3.7 or greater should use the default of "$2y$".
  */
 $config['hash_method']    = 'bcrypt';	// sha1 or bcrypt, bcrypt is STRONGLY recommended
 $config['default_rounds'] = 8;		// This does not apply if random_rounds is set to true
 $config['random_rounds']  = FALSE;
 $config['min_rounds']     = 5;
 $config['max_rounds']     = 9;
+$config['salt_prefix']    = '$2y$';
 
 /*
  | -------------------------------------------------------------------------
@@ -109,17 +88,26 @@ $config['admin_group']                = 'admin';             // Default administ
 $config['identity']                   = 'email';             // A database column which is used to login with
 $config['min_password_length']        = 8;                   // Minimum Required Length of Password
 $config['max_password_length']        = 20;                  // Maximum Allowed Length of Password
-$config['email_activation']           = FALSE;               // Email Activation for registration
-$config['manual_activation']          = FALSE;               // Manual Activation for registration
+$config['email_activation']           = TRUE;               // Email Activation for registration
+$config['manual_activation']          = TRUE;               // Manual Activation for registration
 $config['remember_users']             = TRUE;                // Allow users to be remembered and enable auto-login
 $config['user_expire']                = 86500;               // How long to remember the user (seconds). Set to zero for no expiration
 $config['user_extend_on_login']       = FALSE;               // Extend the users cookies every time they auto-login
-$config['track_login_attempts']       = TRUE;               // Track the number of failed login attempts for each user or ip.
+$config['track_login_attempts']       = FALSE;               // Track the number of failed login attempts for each user or ip.
 $config['track_login_ip_address']     = TRUE;                // Track login attempts by IP Address, if FALSE will track based on identity. (Default: TRUE)
 $config['maximum_login_attempts']     = 3;                   // The maximum number of failed login attempts.
 $config['lockout_time']               = 600;                 // The number of seconds to lockout an account due to exceeded attempts
 $config['forgot_password_expiration'] = 0;                   // The number of milliseconds after which a forgot password request will expire. If set to 0, forgot password requests will not expire.
 
+/*
+ | -------------------------------------------------------------------------
+ | Cookie options.
+ | -------------------------------------------------------------------------
+ | remember_cookie_name Default: remember_code
+ | identity_cookie_name Default: identity
+ */
+$config['remember_cookie_name'] = 'remember_code';
+$config['identity_cookie_name'] = 'identity';
 
 /*
  | -------------------------------------------------------------------------
@@ -129,7 +117,7 @@ $config['forgot_password_expiration'] = 0;                   // The number of mi
  | 	  'file' = Use the default CI config or use from a config file
  | 	  array  = Manually set your email config settings
  */
-$config['use_ci_email'] = FALSE; // Send Email using the builtin CI email class, if false it will return the code and the identity
+$config['use_ci_email'] = TRUE; // Send Email using the builtin CI email class, if false it will return the code and the identity
 $config['email_config'] = array(
 	'mailtype' => 'html',
 );
@@ -141,7 +129,7 @@ $config['email_config'] = array(
  | Folder where email templates are stored.
  | Default: auth/
  */
-$config['email_templates'] = 'auth/email/';
+$config['email_templates'] = 'auth/auth/email/';
 
 /*
  | -------------------------------------------------------------------------
@@ -149,7 +137,7 @@ $config['email_templates'] = 'auth/email/';
  | -------------------------------------------------------------------------
  | Default: activate.tpl.php
  */
-$config['email_activate'] = 'activate.tpl.php';
+$config['email_activate'] = 'activate_tpl.php';
 
 /*
  | -------------------------------------------------------------------------
@@ -157,7 +145,7 @@ $config['email_activate'] = 'activate.tpl.php';
  | -------------------------------------------------------------------------
  | Default: forgot_password.tpl.php
  */
-$config['email_forgot_password'] = 'forgot_password.tpl.php';
+$config['email_forgot_password'] = 'forgot_password_tpl.php';
 
 /*
  | -------------------------------------------------------------------------
@@ -165,7 +153,7 @@ $config['email_forgot_password'] = 'forgot_password.tpl.php';
  | -------------------------------------------------------------------------
  | Default: new_password.tpl.php
  */
-$config['email_forgot_password_complete'] = 'new_password.tpl.php';
+$config['email_forgot_password_complete'] = 'new_password_tpl.php';
 
 /*
  | -------------------------------------------------------------------------

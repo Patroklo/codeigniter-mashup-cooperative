@@ -68,11 +68,25 @@ class Cy_correcaminos_form_model extends Cy_base_form_model
 	 * @author  Patroklo
 	 */
 
+	 
+	 function reset_data()
+	 {
+			$this->active_field_type 	= NULL;
+			$this->loaded 				= FALSE;
+			$this->fields				= array();
+			$this->post_data			= NULL;
+			$this->form					= NULL;
+			$this->rules				= NULL;
+			$this->sanitized_data		= NULL;
+			$this->objects				= NULL;
+			$this->error				= FALSE;
+	 }
 
 	 
 	function set_options($options)
 	{
-
+		$this->reset_data();
+		
 		// we set the object names in the array
 		// objects won't be setted until the method carga it's called or the $_post it's read
 		// then the object will be made empty
@@ -464,7 +478,7 @@ class Cy_correcaminos_form_model extends Cy_base_form_model
 		{
 			$this->set_loaded($this->objects[$object_alias]['data']->_object_loaded());
 		}
-		
+
 		
 	}
 	

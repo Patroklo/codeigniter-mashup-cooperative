@@ -6,12 +6,7 @@ class Derp extends AJAX_Controller {
 
 	public function index()
 	{
-
-		$this->correcaminos;
-			echo '<pre>';
-			  echo var_dump('variable');
-			echo '</pre>';
-
+		echo json_encode(array('hola' => 'adios'));
 	}
 
 }

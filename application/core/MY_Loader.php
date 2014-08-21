@@ -473,7 +473,12 @@ class MY_Loader extends CI_Loader {
 		// with standard Codeigniter controller calls.
 		if(method_exists($controller, '_remap'))
 		{
-			array_unshift($params, $method);
+			if(!is_array($params))
+			{
+				$params = array($params);
+			}
+			
+			$params = array($method, $params);
 			$method = '_remap';
 		}
 
@@ -483,6 +488,7 @@ class MY_Loader extends CI_Loader {
         }
 
         // Capture output and return
+ 
         ob_start();
         $result = call_user_func_array(array(&$controller, $method), $params);
 
@@ -693,5 +699,82 @@ class MY_Loader extends CI_Loader {
 
 	}
 	
+/*    if (is_array($library)) {
+            foreach ($library as $class) {
+                $this->library($class, $params);
+            }
+            return;
+        }
 
+        // Detect module
+        if (list($module, $class) = $this->detect_module($library)) {
+            // Module already loaded
+            if (in_array($module, $this->_ci_modules)) {
+                return parent::library($class, $params, $object_name);
+            }
+
+            // Add module
+            $this->add_module($module);
+
+            // Let parent do the heavy work
+            $void = parent::library($class, $params, $object_name);
+
+            // Remove module
+            $this->remove_module();
+
+            return $void;
+        } else {
+            return parent::library($library, $params, $object_name);
+        }*/
+        
+        
+	/**
+	 * Driver Loader
+	 *
+	 * Loads a driver library.
+	 *
+	 * @param	string|string[]	$library	Driver name(s)
+	 * @param	array		$params		Optional parameters to pass to the driver
+	 * @param	string		$object_name	An optional object name to assign to
+	 *
+	 * @return	object|bool	Object or FALSE on failure if $library is a string
+	 *				and $object_name is set. CI_Loader instance otherwise.
+	 */
+	public function driver($library, $params = NULL, $object_name = NULL)
+	{
+		if (is_array($library))
+		{
+			foreach ($library as $driver)
+			{
+				$this->driver($driver, $params);
+			}
+
+			return $this;
+		}
+		elseif (empty($library))
+		{
+			return FALSE;
+		}
+
+        // Detect module
+		if (list($module, $class) = $this->detect_module($library)) {
+            // Module already loaded
+            if (in_array($module, $this->_ci_modules)) {
+                return parent::driver($class, $params, $object_name);
+            }
+
+            // Add module
+            $this->add_module($module);
+
+            // Let parent do the heavy work
+            $void = parent::driver($class, $params, $object_name);
+
+            // Remove module
+            //$this->remove_module();
+
+            return $void;
+        } else {
+            return parent::driver($library, $params, $object_name);
+        }
+	}
 }

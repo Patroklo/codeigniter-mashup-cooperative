@@ -37,6 +37,20 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 |
 */
 
+$hook['post_controller_constructor'] = array(
+        'class'    => 'Min',
+        'function' => 'index',
+        'filename' => 'Min.php',
+        'filepath' => 'modules/cyassets/controllers',
+
+);
+/*$hook['post_controller'][] = 
+	array(
+    'class' => 'Derp',
+    'function'  => 'index',
+    'filename'  => 'Auth_controller.php',
+    'filepath'  => 'modules/auth/controllers'
+	);*/
 /**
  * FILTER HOOKS. CALLED FOR FILTER CLOSURES FROM ROUTES
  */

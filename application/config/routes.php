@@ -120,10 +120,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 	
 	
 	Route::filter('derp', function(){
-		
-			echo '<pre>';
-			  echo var_dump('entra en filtro');
-			echo '</pre>';
 	});
 	
 	Route::pattern('id',        '(:num)');

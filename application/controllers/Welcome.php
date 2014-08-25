@@ -5,8 +5,24 @@ class Welcome extends MY_Controller {
 
 	public function index()
 	{
+		   preg_match('/^webexMatriculas-(.*)-(.*)/','webexMatriculas-TF000000018291-4845a402-5563-4d36-9dfe-db698a81101a-56e098f638b8df84e3d67ec465fc19e5', $matches);
+    
+        echo '<pre>';
+          echo var_dump($matches);
+        echo '</pre>';
+		//var_dump(preg_match('#^permissions/(group|user)/([0-9]+)$#', 'permissions/group/1'));
+		die();
 		
+		 $this->correcaminos->beep_from('users')->or_where('id', 1)->or_where('id',2)->or_where('id',3)->get();
 		 
+		 
+			 echo '<pre>';
+			   echo var_dump($this->correcaminos->last_query());
+			 echo '</pre>';
+		 
+			 echo '<pre>';
+			   echo var_dump(Route::named('activate_user', array('hola')));
+			 echo '</pre>';
 			 echo '<pre>';
 			   echo var_dump($this->load->controller('Derp/index', '', TRUE));
 			 echo '</pre>';

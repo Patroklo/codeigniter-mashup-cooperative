@@ -597,32 +597,47 @@
         {
             if($value === FALSE)
             {
-                $list = Parser::_separate_columns_where($column, 'OR');
-                foreach($list as &$item)
-                {
-                    if(strpos($item['column'], '(') !== FALSE)
-                    {
-                        $this->open_bracket($item['type']);
-                        $item['column'] = str_replace('(', '', $item['column']);
-                    }
-                    
-                    if(strpos($item['value'], ')') !== FALSE)
-                    {
-                        $close_bracket = TRUE;
-                        $item['value'] = str_replace(')', '', $item['value']);
-                    }
-                    else
-                    {
-                        $close_bracket = FALSE;
-                    }
-                    
-                    $this->_where($item['column'], $item['value'], $item['type'], $parse);
-
-                    if($close_bracket == TRUE)
-                    {
-                        $this->close_bracket();
-                    }
-                    
+            	
+			   if(is_array($column))
+               {
+                   foreach($column as $key => $col)
+                   {
+                   		if(is_numeric($key))
+						{
+							$this->_exception("The column name can't be a number.");
+						}
+                       $this->or_where($key, $col);
+                   }
+               }
+               elseif(is_string($column))
+               {
+	                $list = Parser::_separate_columns_where($column, 'OR');
+	                foreach($list as &$item)
+	                {
+	                    if(strpos($item['column'], '(') !== FALSE)
+	                    {
+	                        $this->open_bracket($item['type']);
+	                        $item['column'] = str_replace('(', '', $item['column']);
+	                    }
+	                    
+	                    if(strpos($item['value'], ')') !== FALSE)
+	                    {
+	                        $close_bracket = TRUE;
+	                        $item['value'] = str_replace(')', '', $item['value']);
+	                    }
+	                    else
+	                    {
+	                        $close_bracket = FALSE;
+	                    }
+	                    
+	                    $this->_where($item['column'], $item['value'], $item['type'], $parse);
+	
+	                    if($close_bracket == TRUE)
+	                    {
+	                        $this->close_bracket();
+	                    }
+	                    
+	                }
                 }
             }
             else 

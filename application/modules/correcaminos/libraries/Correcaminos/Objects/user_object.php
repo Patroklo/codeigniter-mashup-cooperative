@@ -5,6 +5,8 @@
 		private $is_admin = NULL;
 		private $group_names;
         
+		private $permissions;
+		
         static function _classData()
         {
             return array('tableName' => 'users',
@@ -111,6 +113,48 @@
 			 * if all, true
 			 */
 			return $check_all;
+		}
+		
+		public function has_permission($permission, $type = 'reading')
+		{
+			
+			if($this->is_admin())
+			{
+				return TRUE;
+			}
+			
+			$select_values = array('no permission' 	=> 0,
+								   'reading'		=> 1,
+								   'writting'		=> 2);
+								   
+			$permission_key = $select_values[$type];
+			
+			if(is_null($this->permissions))
+			{
+				$CI =& get_instance();
+				
+				$groups = $this->__get_group_names();
+				
+				$group_ids = array_keys($groups);
+				
+				$permission_list = $CI->ion_auth_model->get_user_permissions($this->get_data('id'), $group_ids);
+				
+				foreach($permission_list as $permission_data)
+				{
+					$this->permissions[$permission_data->name] = $permission_data->permission_level;
+				}
+			}
+			
+			if(array_key_exists($permission, $this->permissions))
+			{
+				if ($this->permissions[$permission] >= $permission_key)
+				{
+					return TRUE;
+				}
+			}
+			
+			return FALSE;
+
 		}
 
 

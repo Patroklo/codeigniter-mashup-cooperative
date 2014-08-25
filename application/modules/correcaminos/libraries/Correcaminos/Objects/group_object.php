@@ -10,4 +10,10 @@
                          'primary_column' => 'id');
         }
 
+		function get_name()
+		{
+			return $this->_data->name;
+		}
+
+
     }

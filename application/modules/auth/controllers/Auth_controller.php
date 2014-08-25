@@ -220,12 +220,12 @@ class Auth_controller extends MY_Controller {
 			{
 				//if there were no errors
 				$this->session->set_flashdata('message', $this->ion_auth_model->messages());
-				redirect("login", 'refresh'); //we should display a confirmation page here instead of the login page
+				redirect(Route::named('login'), 'refresh'); //we should display a confirmation page here instead of the login page
 			}
 			else
 			{
 				$this->session->set_flashdata('message', $this->ion_auth_model->errors());
-				redirect("auth/forgot_password", 'refresh');
+				redirect(Route::named('forgot_password'), 'refresh');
 			}
 		}
 	}
@@ -314,7 +314,7 @@ class Auth_controller extends MY_Controller {
 					else
 					{
 						$this->session->set_flashdata('message', $this->ion_auth_model->errors());
-						redirect('auth/reset_password/' . $code, 'refresh');
+						redirect(Route::named('reset_password', array($code)) , 'refresh');
 					}
 				}
 			}
@@ -323,7 +323,7 @@ class Auth_controller extends MY_Controller {
 		{
 			//if the code is invalid then send them back to the forgot password page
 			$this->session->set_flashdata('message', $this->ion_auth_model->errors());
-			redirect("forgot_password", 'refresh');
+			redirect(Route::named('forgot_password'), 'refresh');
 		}
 	}
 
@@ -416,7 +416,7 @@ class Auth_controller extends MY_Controller {
 		{
 			//redirect them to the forgot password page
 			$this->session->set_flashdata('message', $this->ion_auth_model->errors());
-			redirect("forgot_password", 'refresh');
+			redirect(Route::named('forgot_password'), 'refresh');
 		}
 	}
 	
@@ -691,6 +691,41 @@ class Auth_controller extends MY_Controller {
 		);
 
 		$this->_render_page('auth/auth/edit_group', $this->data);
+	}
+
+
+	function permission_list()
+	{
+		
+		$data->groups = $this->ion_auth_model->groups()->get();
+		
+		$data->users = $this->ion_auth_model->users()->get();
+		
+		$this->_render_page('auth/auth/permission/permission_list', $data);
+		
+	}
+	
+	function load_permissions()
+	{
+		
+		$permission_type = $this->uri->segment('permission_type');
+		$id 			 = $this->uri->segment('id');
+	
+		$this->load->model('auth/form_models/Assign_permissions_model');
+		
+		
+		$this->data['object_data'] = $this->Assign_permissions_model->load_permission($permission_type, $id);
+			
+		if($this->data['object_data'] == FALSE)
+		{
+			show_404();
+		}
+		
+		$this->Assign_permissions_model->valid();
+
+		$this->_render_page('auth/auth/permission/load_permission');
+		
+		
 	}
 
 

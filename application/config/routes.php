@@ -132,21 +132,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 	
 	Route::any('Derp/index',	'',										array('before' => 'derp'));
 	
-	
-	Route::any('register',					'auth/Auth_controller/create_user', 		array('before' => 'not_logged'));
-	Route::any('login', 					'auth/Auth_controller/login', 				array('before' => 'not_logged'));
-	Route::any('logout',					'auth/Auth_controller/logout', 				array('before' => 'logged'));
-	Route::any('forgot_password',			'auth/Auth_controller/forgot_password', 	array('before' => 'not_logged'));
-	Route::any('forgot_password/{code}',	'auth/Auth_controller/reset_password/$1');
-	Route::any('change_password',			'auth/Auth_controller/change_password',		array('before' => 'logged'));
-	Route::any('activate/{id}/{code?}', 	'auth/Auth_controller/activate/$1/$2', 		array('before' => 'activate_user'));
-	Route::any('deactivate/{id}', 			'auth/Auth_controller/deactivate/$1', 		array('before' => 'is_admin'));
-	Route::any('edit_user/{id?}',			'auth/Auth_controller/edit_user/$1', 		array('before' => 'logged'));
-	Route::any('create_group',				'auth/Auth_controller/create_group',		array('before' => 'is_admin'));
-	Route::any('edit_group/{id}',			'auth/Auth_controller/edit_group/$1',		array('before' => 'is_admin'));
-	
 	$route = Route::map();
-
 
 	$route['default_controller'] = 'welcome';
 	$route['404_override'] = '';

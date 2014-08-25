@@ -81,6 +81,25 @@ class MY_Router extends CI_Router {
         parent::__construct();
     }
 
+
+	protected function _set_routing()
+	{
+
+		// Load the routes.php file.
+		if (is_dir(APPPATH.'routes'))
+		{
+			$file_list = scandir(APPPATH.'routes');
+			foreach($file_list as $file)
+			{
+				if (is_file(APPPATH.'routes/'.$file))
+				{
+					include(APPPATH.'routes/'.$file);
+				}
+			}
+		}
+		parent::_set_routing();
+	}
+
     /**
      * Validates the supplied segments.  Attempts to determine the path to
      * the controller.

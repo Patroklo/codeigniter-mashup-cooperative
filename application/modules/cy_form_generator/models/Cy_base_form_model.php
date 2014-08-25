@@ -175,7 +175,6 @@ class Cy_base_form_model extends CI_Model
 		{
 			$this->auto_save = $auto_save;
 		}
-		
 
 		//add rules of the form validation
 		$this->add_rules();

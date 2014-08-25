@@ -121,6 +121,7 @@ class Ion_auth_model extends CI_Model
 
 	public $user_object;
 	public $group_object;
+	public $permission_object;
 
 
 	public function __construct()
@@ -205,7 +206,7 @@ class Ion_auth_model extends CI_Model
 		
 		$this->user_object	= $this->config->item('user_object', 'adapted_ion_auth');
 		$this->group_object	= $this->config->item('group_object', 'adapted_ion_auth');
-
+		$this->permission_object = $this->config->item('permission_object', 'adapted_ion_auth');
 
 		$this->trigger_events('model_constructor');
 	}
@@ -1929,6 +1930,65 @@ class Ion_auth_model extends CI_Model
 		return $this->correcaminos->beep($this->group_object);
 	}
 
+	public function permissions()
+	{
+		return $this->correcaminos->beep($this->permission_object);
+	}
+
+	/**
+	 * 
+	 * Get all permissions of a user and all its assigned groups
+	 * 
+	 */
+
+	public function get_user_permissions($user_id, $groups = NULL)
+	{
+		$assigned_permissions_table =  $this->config->item('assigned_permissions_table', 'adapted_ion_auth');
+		$permissions_table =  $this->config->item('permissions_table', 'adapted_ion_auth');
+
+		if(is_null($groups))
+		{
+			$group_query = $this->get_users_groups();
+			
+			$groups = array();
+			
+			foreach($group_query->result('array') as $group)
+			{
+				$groups[$group['id']] = $group['id'];
+			}
+		}
+		
+		
+		$query = beep_from($assigned_permissions_table)
+							->select('permission_id, '.$assigned_permissions_table.'.*, '.$permissions_table.'.name')
+							->join($permissions_table, $permissions_table.'.id = '.$assigned_permissions_table.'.permission_id')
+							->order_by('permission_level', 'ASC')
+							->where('user_id', $user_id);
+		
+		if(!empty($groups))
+		{
+			$query->or_where_in('group_id', $groups);
+		}
+		
+		$query = $query->get();
+		
+		if($query->num_rows() > 0)
+		{
+			$return_data = array();
+			
+			// we group the results via permission_id and we only get the
+			// lowest level or permission for each one
+			$permission_list = $query->group_result('object');
+			
+			return $permission_list;
+		}
+		else
+		{
+			return array();
+		}
+		
+	}
+	
 	
 }
 

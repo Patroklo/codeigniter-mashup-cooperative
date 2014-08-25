@@ -4,7 +4,7 @@
 <?php if ($label) { ?>
 	<label for="<?=$id?>"><?=$label?></label>
 <?php } ?>
-<select class="form-control<?=$class?>"<?=$attributes?>>
+<select class="form-control<?=$class?>"<?=$attributes?> name="<?=$name?>">
 	<?php foreach ($options as $key => $o) { ?>
 		<option value="<?=$key?>"<?=($key==$value)?' selected':''?>><?=$o?></option>
 	<?php } ?>

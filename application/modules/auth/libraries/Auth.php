@@ -149,6 +149,16 @@
 		}
 
 
+		public function has_permission($permission, $type = 'reading')
+		{
+			if(!$this->logged_in())
+			{
+				return FALSE;
+			}
+			
+			return $this->get_auth()->has_permission($permission, $type);
+		}
+
 		/**
 		 * logout
 		 *

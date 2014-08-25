@@ -1,0 +1,1 @@
+[{"Field":"id","Type":"int(11)","Null":"NO","Key":"PRI","Default":null,"Extra":"auto_increment"},{"Field":"name","Type":"varchar(255)","Null":"NO","Key":"","Default":null,"Extra":""}]

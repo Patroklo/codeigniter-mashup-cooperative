@@ -457,6 +457,8 @@
 
 	class Form_Bootstrap extends Form_field
 	{
+		protected $show_error;
+		
 		function __construct($options)
 		{
 			parent::__construct($options);
@@ -482,7 +484,7 @@
 			$basic_data['name']		= $this->name;
 			$basic_data['value'] 	= $this->value;
 			
-			if(!$this->error == FALSE)
+			if(!$this->error == FALSE && $this->show_error == TRUE)
 			{
 				$basic_data['error'] = $this->error;
 			}
@@ -502,6 +504,7 @@
 	{
 		
 		protected $submit_text;
+		
 		
 		function __construct($options = array())
 		{

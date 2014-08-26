@@ -2,6 +2,8 @@
 
 class Auth_controller extends MY_Controller {
 
+	var $data;
+
 	function __construct()
 	{
 		parent::__construct();
@@ -701,6 +703,8 @@ class Auth_controller extends MY_Controller {
 		
 		$data->users = $this->ion_auth_model->users()->get();
 		
+		$data->permissions = $this->ion_auth_model->permissions()->get();
+		
 		$this->_render_page('auth/auth/permission/permission_list', $data);
 		
 	}
@@ -726,6 +730,39 @@ class Auth_controller extends MY_Controller {
 		$this->_render_page('auth/auth/permission/load_permission');
 		
 		
+	}
+	
+	function add_permission()
+	{
+		$this->load->model('auth/form_models/Permissions_model');
+		
+		if($this->Permissions_model->valid())
+		{
+			redirect('permission_list', 'refresh');
+		}
+		
+		$this->_render_page('auth/auth/permission/permission_data');
+	}
+	
+	function edit_permission()
+	{
+		$permission_id = $this->uri->segment('id');
+		
+		$permission_object = $this->ion_auth_model->permissions()->where('id', $permission_id)->row();
+		
+		if($permission_object == FALSE)
+		{
+			show_404();
+		}
+		
+		$this->load->model('auth/form_models/Permissions_model');
+		
+		
+		$this->Permissions_model->carga('permission_object', $permission_object);
+		
+		$this->Permissions_model->valid();
+		
+		$this->_render_page('auth/auth/permission/permission_data');
 	}
 
 

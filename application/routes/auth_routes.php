@@ -43,10 +43,7 @@
 		}	
 	});
 	
-	
-	Route::filter('derp', function(){
-	});
-	
+
 	Route::pattern('id',        '(:num)');
 	
 

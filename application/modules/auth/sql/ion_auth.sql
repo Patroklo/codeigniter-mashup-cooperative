@@ -27,7 +27,7 @@ DROP TABLE IF EXISTS `users`;
 # Table structure for table 'users'
 #
 
-CREATE TABLE `users` (
+CREATE TABLE IF NOT EXISTS `users` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `ip_address` varchar(15) NOT NULL,
   `username` varchar(100) NOT NULL,
@@ -45,17 +45,25 @@ CREATE TABLE `users` (
   `last_name` varchar(50) DEFAULT NULL,
   `company` varchar(100) DEFAULT NULL,
   `phone` varchar(20) DEFAULT NULL,
+  `banned` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=60 ;
+
+--
+-- Volcado de datos para la tabla `users`
+--
+
+INSERT INTO `users` (`id`, `ip_address`, `username`, `password`, `salt`, `email`, `activation_code`, `forgotten_password_code`, `forgotten_password_time`, `remember_code`, `created_on`, `last_login`, `active`, `first_name`, `last_name`, `company`, `phone`, `banned`) VALUES
+(1, '127.0.0.1', 'administrator', '$2y$08$7ASnA5lEMPFKcyAJ5R6ZtuejdblvGrXpEMr9P575hbX6YzwwpyxwO', '', 'admin@admin.com', '', NULL, NULL, 'AA0ax60JYBjm8AxXVNRgMe', 1268889823, 1409074948, 1, 'Derp', 'Administrador guay', 'No company', '0', 0),
+(54, '46.27.55.26', 'derp derp', '$2y$08$MpmLJRbAmrnJii2pF1Yt6OU8B9pI/qjUtPBVbBZzTeMy2XBN2miHu', NULL, 'patroklo@gmail.com', '3de18ab45e6fdca4a2e29aee2e97a479d8914d68', NULL, NULL, NULL, 1408382630, 1408383782, 1, 'derp', 'derp', 'derp', 'root', 0);
 
 
 #
 # Dumping data for table 'users'
 #
 
-INSERT INTO `users` (`id`, `ip_address`, `username`, `password`, `salt`, `email`, `activation_code`, `forgotten_password_code`, `created_on`, `last_login`, `active`, `first_name`, `last_name`, `company`, `phone`) VALUES
-     ('1','127.0.0.1','administrator','$2a$07$SeBknntpZror9uyftVopmu61qg0ms8Qv1yV6FG.kQOSM.9QhmTo36','','admin@admin.com','',NULL,'1268889823','1268889823','1', 'Admin','istrator','ADMIN','0');
-
+#INSERT INTO `users` (`id`, `ip_address`, `username`, `password`, `salt`, `email`, `activation_code`, `forgotten_password_code`, `created_on`, `last_login`, `active`, #`first_name`, `last_name`, `company`, `phone`) VALUES
+#     ('1','127.0.0.1','administrator','$2a$07$SeBknntpZror9uyftVopmu61qg0ms8Qv1yV6FG.kQOSM.9QhmTo36','','admin@admin.com','',NULL,'1268889823','1268889823','1', #'Admin','istrator','ADMIN','0');
 
 DROP TABLE IF EXISTS `users_groups`;
 

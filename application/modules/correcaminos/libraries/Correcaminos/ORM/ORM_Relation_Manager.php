@@ -120,6 +120,22 @@
 				{
 					$this->ORM_QueryBuilder = $this->ORM_QueryBuilder->where($this->join_data['destiny_table'].'.'.$this->join_data['referencedColumnName'], $this->id);
 				}
+			
+				if (array_key_exists('order_colunm', $this->join_data))
+				{
+					if (is_array($this->join_data['order_column']))
+					{
+						$order_column 	= $this->join_data['order_column'][0];
+						$type 			= $this->join_data['order_column'][1];
+					}
+					else
+					{
+						$order_column 	= $this->join_data['order_column'][0];
+						$type 			= 'ASC';
+					}
+					
+					$this->ORM_QueryBuilder = $this->ORM_QueryBuilder->order_by($order_column, $type);
+				}
 			}
 		}
 		
@@ -229,7 +245,24 @@
                 {
                     $this->ORM_QueryBuilder = $this->ORM_QueryBuilder->where($this->join_data['intermediateTable'].'.'.$this->join_data['intermediateColumnName'], $this->id);
                 }
-            }
+            			
+				if (array_key_exists('order_column', $this->join_data))
+				{
+					if (is_array($this->join_data['order_column']))
+					{
+						$order_column 	= $this->join_data['order_column'][0];
+						$type 			= $this->join_data['order_column'][1];
+					}
+					else
+					{
+						$order_column 	= $this->join_data['order_column'][0];
+						$type 			= 'ASC';
+					}
+					
+					$this->ORM_QueryBuilder = $this->ORM_QueryBuilder->order_by($order_column, $type);
+				}
+			
+			}
             
         }  
 

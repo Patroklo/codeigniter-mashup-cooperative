@@ -413,7 +413,8 @@ class Cy_base_form_model extends CI_Model
 		}
 		
 		$options['id'] = $field_id;
-		if(!array_key_exists('name', $options))
+		
+		if(!array_key_exists('name', $options) && $this->fields[$field_id]->get_parameter('name') === NULL)
 		{
 			$options['name'] = $options['id'];
 		}
@@ -583,6 +584,16 @@ class Cy_base_form_model extends CI_Model
 
 		return $field->show();
 		
+	}
+	
+	function get_fields($names_only = TRUE)
+	{
+		if ($names_only === TRUE)
+		{
+			return array_keys($this->fields);
+		}
+		
+		return $this->fields;
 	}
 	
 	protected function get_message($id, $additional_string = NULL)

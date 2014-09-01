@@ -625,20 +625,22 @@ class MY_Loader extends CI_Loader {
         if (list($module, $class) = $this->detect_module($className)) {
             // Module already loaded
             if (in_array($module, $this->_ci_modules)) {
-            	$this->_include_class_load($class);
+            	return $this->_include_class_load($class);
             }
 
             // Add module
             $this->add_module($module);
 
             // Let parent do the heavy work
-            $this->_include_class_load($class);
+            $void = $this->_include_class_load($class);
 
             // Remove module
             $this->remove_module();
+			
+			return $void;
 
         } else {
-            $this->_include_class_load($className);
+           return $this->_include_class_load($className);
         }
     }
 	
@@ -698,34 +700,6 @@ class MY_Loader extends CI_Loader {
 		}
 
 	}
-	
-/*    if (is_array($library)) {
-            foreach ($library as $class) {
-                $this->library($class, $params);
-            }
-            return;
-        }
-
-        // Detect module
-        if (list($module, $class) = $this->detect_module($library)) {
-            // Module already loaded
-            if (in_array($module, $this->_ci_modules)) {
-                return parent::library($class, $params, $object_name);
-            }
-
-            // Add module
-            $this->add_module($module);
-
-            // Let parent do the heavy work
-            $void = parent::library($class, $params, $object_name);
-
-            // Remove module
-            $this->remove_module();
-
-            return $void;
-        } else {
-            return parent::library($library, $params, $object_name);
-        }*/
         
         
 	/**

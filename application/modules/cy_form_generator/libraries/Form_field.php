@@ -64,13 +64,30 @@
 			
 			foreach($options as $key => $value)
 			{
-				if(isset($this->$key) || array_key_exists($key, $object_vars ))
+				if($key == 'options')
 				{
-					$this->$key = $value;
+					foreach($value as $key2 => $value2)
+					{
+						if(isset($this->$key2) || array_key_exists($key2, $object_vars ))
+						{
+							$this->$key2 = $value2;
+						}
+						else
+						{
+							$this->options[$key2] = $value2;
+						}
+					}
 				}
 				else
 				{
-					$this->options[$key] = $value;
+					if(isset($this->$key) || array_key_exists($key, $object_vars ))
+					{
+						$this->$key = $value;
+					}
+					else
+					{
+						$this->options[$key] = $value;
+					}
 				}
 			}
 		}
@@ -534,7 +551,7 @@
 		
 		function submit_button()
 		{
-			return form_submit('mysubmit', $this->submit_text);
+			return form_submit(array('name' => 'mysubmit', 'value' => $this->submit_text, 'class' => 'btn'));
 		}
 		
 		function end_form()
@@ -567,6 +584,15 @@
 		}
 	}
 	
+	class Textarea_Bootstrap_field extends Form_Bootstrap 
+	{
+		function get_field($extra_data = array())
+		{
+			return $this->_CI->cyforms->textarea->options($this->get_options())->generate();
+		}
+	}
+	
+	
 	class Password_Bootstrap_field extends Form_Bootstrap 
 	{
 		function get_field($extra_data = array())
@@ -584,11 +610,6 @@
 		function get_field($extra_data = array())
 		{
 			$options = $this->get_options();
-			
-			if($this->value)
-			{
-				$options['checked'] = TRUE;
-			}
 			
 			return $this->_CI->cyforms->checkbox->options($options)->generate();
 		}

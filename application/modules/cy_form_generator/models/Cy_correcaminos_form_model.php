@@ -106,7 +106,7 @@ class Cy_correcaminos_form_model extends Cy_base_form_model
 		
 		$new_options = array();
 		
-		
+
 		// change the fields sub array in order to be comprensible for
 		// the parent
 		
@@ -114,13 +114,24 @@ class Cy_correcaminos_form_model extends Cy_base_form_model
 		{
 			foreach($options['fields'] as &$field_data)
 			{
+				if(array_key_exists('object_type', $field_data['options']))
+				{
+					if(!array_key_exists($field_data['options']['object_type'], $this->objects))
+					{
+						throw new Exception("The object ".$field_data['options']['object_type']." it's not defined in the object list.", 1);
+					}
+				}
+				
 				if(!array_key_exists('fieldName', $field_data['options']))
 				{
 					$field_data['options']['fieldName'] = $field_data['id'];
 				}
 				
-				$field_data['options']['name'] = $field_data['id'];
-				
+				if(!array_key_exists('name', $field_data['options']))
+				{
+					$field_data['options']['name'] = $field_data['id'];
+				}
+
 				if(array_key_exists('upload', $field_data['options']) && $field_data['options']['upload'] == TRUE)
 				{
 					$this->set_upload($field_data);

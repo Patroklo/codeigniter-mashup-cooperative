@@ -60,7 +60,7 @@
 				}
 				elseif($state == 'DELETE')
 				{
-					$queryString->delete();
+					$queryString->where($object_key_pri, $object->get_data($object_key_pri))->delete();
 					MemoryManager::delete_object($object);
 
 					unset($object);

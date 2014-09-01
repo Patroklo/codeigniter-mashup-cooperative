@@ -69,6 +69,7 @@ class base{
 	                         											 'target'				=>  (string) (object name) 'provincia_object',
 	                         											 'columnName'			=>  (string) (column name in object) 'idprovincia',
 	                         											 'referencedColumnName'	=>  (string) (column name in target object)'idprovincia'
+			  															 'order_column'			=>  (optional) (string) (column name in target object)
 							 											)
 			  									'prueba'	=> array('loading_type'							=>	(enum) 'eager|lazy',
 	                         											 'type'								=>	'ManyToMany', (enum) 'OneToOne|OneToMany|ManyToMany|OneToText',
@@ -77,7 +78,8 @@ class base{
 	                         											 'referencedColumnName'				=> (string) (column name in target object)'idprovincia'
 			  															 'intermediateTable'				=> (optional) (string) (table used in many to many) 'tabla',
 			  															 'intermediateColumnName' 			=> 'derp',
-			   															 'intermediatereferencedColumnName' => 'derp_derp'
+			   															 'intermediatereferencedColumnName' => 'derp_derp',
+			  															 'order_column'						=> (optional) (string) (column name in target object)order_column
 							 										)
 						 					),
 			  				 'files' => array( 'foto' 	=> array('directory' => (string) (object_name) 'foto_usuario',

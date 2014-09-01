@@ -5,9 +5,13 @@
 		
 		private $__filter_params;
 		
+		public $data;
+		
 		function __construct()
 		{
 			parent::__construct();
+			
+			$this->data = new stdClass();
 			
 			$this->__filter_params = array($this->uri->uri_string());
 			

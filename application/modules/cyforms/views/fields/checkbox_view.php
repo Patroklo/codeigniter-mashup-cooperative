@@ -2,7 +2,8 @@
 	<p>Error: <?=$error?></p>
 <?php } ?>
 <label>
-	<input type="checkbox" id="<?=$id?>" name="<?=$name?>"<?php if ($checked) { echo ' checked="checked"'; } ?>><?php if ($label) { echo $label; } ?>
+	<input type="checkbox" id="<?=$id?>" name="<?=$name?>"<?php if ($checked) { echo ' checked="checked"'; } ?>
+	<?php if ($value) { echo ' value="'.$value.'"'; } ?>><?php if ($label) { echo $label; } ?>
 </label>
 <?php if ($help) { ?>
 	<p><?=$help?></p>

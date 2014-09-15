@@ -634,6 +634,11 @@
 
 	class Datepicker_Bootstrap_field extends Form_Bootstrap
 	{
+		function set_value($value)
+		{
+			$this->value = date("d-m-Y", strtotime($value));
+		}
+		
 		function get_field($extra_data = array())
 		{
 			return $this->_CI->cyforms->datepicker->options($this->get_options())->generate();

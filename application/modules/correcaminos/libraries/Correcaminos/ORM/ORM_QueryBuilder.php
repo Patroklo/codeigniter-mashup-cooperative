@@ -319,6 +319,11 @@
        
          private function eager_loading()
          {
+         	if (empty($this->_result_data))
+			{
+				return FALSE;
+			}
+			
          	//si no se permite el eager loading, ignorará esta función.
 			if($this->_eager_loading == FALSE)
 			{
@@ -352,16 +357,18 @@
 						}
 					}
 
-					
 					$relation->add_index($id_list[$column['columnName']]);
 
 					$join_data = $relation->get_data();
 					
-					foreach($this->_result_data as &$r)
+					if ( ! empty($join_data))
 					{
-						if(array_key_exists($r->get_data($column['columnName']), $join_data))
+						foreach($this->_result_data as &$r)
 						{
-							$r->set_data($key, $join_data[$r->get_data($column['columnName'])], FALSE);
+							if(array_key_exists($r->get_data($column['columnName']), $join_data))
+							{
+								$r->set_data($key, $join_data[$r->get_data($column['columnName'])], FALSE);
+							}
 						}
 					}
 				}

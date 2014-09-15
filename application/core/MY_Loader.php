@@ -42,6 +42,8 @@ class MY_Loader extends CI_Loader {
      */
     protected $_ci_modules = array();
 
+	protected $_ci_apis    = array();
+
     /**
      * List of loaded controllers
      *
@@ -647,7 +649,7 @@ class MY_Loader extends CI_Loader {
 	private function _include_class_load($class)
 	{
 		$class = str_replace('.php', '', $class);
-		
+
 		// Was the path included with the class name?
 		// We look for a slash to determine this
 		if (($last_slash = strrpos($class, '/')) !== FALSE)
@@ -751,4 +753,117 @@ class MY_Loader extends CI_Loader {
             return parent::driver($library, $params, $object_name);
         }
 	}
+
+
+	public function api($uri, $params = array(), $return = FALSE)
+	{
+		// No valid module detected, add current module to uri
+		list($module) = $this->detect_module($uri);
+		if (!isset($module)) {
+			$router = & $this->_ci_get_component('router');
+			if ($router->module) {
+				$module = $router->module;
+				$uri = $module . '/' . $uri;
+			}
+		}
+
+		// Add module
+		$this->add_module($module);
+
+		// Execute the controller method and capture output
+		$void = $this->_load_api($uri, $params, $return);
+
+		// Remove module
+		$this->remove_module();
+
+		return $void;
+	}
+
+	/**
+	 * Controller loader
+	 *
+	 * This function is used to load and instantiate controllers
+	 *
+	 * @param	string
+	 * @param	array
+	 * @param	boolean
+	 * @return	object
+	 */
+	private function _load_api($uri = '', $params = array(), $return = FALSE) {
+
+		$router = & $this->_ci_get_component('router');
+		// Locate the controller
+		$segments = $router->locate(explode('/', $uri));
+		$class = isset($segments[0]) ? $segments[0] : FALSE;
+		$method = isset($segments[1]) ? $segments[1] : "index";
+
+		// Controller not found
+		if (!$class) {
+			return;
+		}
+
+		if (!array_key_exists(strtolower($class), $this->_ci_apis)) {
+			// Determine filepath
+			$filepath = APPPATH . 'controllers/' . $router->fetch_directory() . $class . '.php';
+
+			// Load the controller file
+			if (file_exists($filepath))
+			{
+				include_once ($filepath);
+			}
+
+			// Controller class not found, show 404
+			if (!class_exists($class)) {
+				show_404("{$class}/{$method}");
+			}
+
+			// Controller class MUST BE EXTENDED FROM AJAX_Controller
+			if(get_parent_class($class) != 'Api_Controller')
+			{
+				throw new Exception("The controller ".$class." must extend Api_Controller.", 1);
+			}
+
+			// Create a controller object
+			$this->_ci_apis[strtolower($class)] = new $class();
+		}
+
+		$controller = $this->_ci_apis[strtolower($class)];
+
+		// Method does not exists
+		if ( ! method_exists($controller, $method)) {
+			show_404("{$class}/{$method}");
+		}
+
+		// _remap must be called, if it exists, to mantain integrity
+		// with standard Codeigniter controller calls.
+		if(method_exists($controller, '_remap'))
+		{
+			if(!is_array($params))
+			{
+				$params = array($params);
+			}
+
+			$params = array($method, $params);
+			$method = '_remap';
+		}
+
+		// Capture output and return
+
+		ob_start();
+		$result = call_user_func_array(array(&$controller, $method), $params);
+
+		// Return the buffered output
+		if ($return === TRUE) {
+			$buffer = ob_get_contents();
+			@ob_end_clean();
+			return $buffer;
+		}
+
+		// Close buffer and flush output to screen
+		ob_end_flush();
+
+		// Return controller return value
+		return $result;
+	}
+
 }

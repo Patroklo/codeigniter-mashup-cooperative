@@ -11,7 +11,7 @@ class Auth_controller extends MY_Controller {
 		$this->load->model('auth/Ion_auth_model');
 		$this->load->library('form_validation');
 		$this->load->helper('url');
-
+		$this->data = array();
 
 		$this->form_validation->set_error_delimiters($this->config->item('error_start_delimiter', 'ion_auth'), $this->config->item('error_end_delimiter', 'ion_auth'));
 

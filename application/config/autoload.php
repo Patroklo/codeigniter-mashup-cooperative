@@ -85,7 +85,7 @@ $autoload['packages'] = array();
 |	$autoload['libraries'] = array('user_agent' => 'ua');
 */
 
-$autoload['libraries'] = array('correcaminos/Correcaminos', 'correcaminos/CI_db_parser', 'auth/Auth');
+$autoload['libraries'] = array('Js_load','correcaminos/Correcaminos', 'correcaminos/CI_db_parser', 'auth/Auth');
 
 
 /*

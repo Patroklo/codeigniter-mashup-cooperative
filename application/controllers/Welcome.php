@@ -4,18 +4,29 @@ class Welcome extends MY_Controller {
 
 
 	public function index()
+    {
+
+
+    	// $this->load->controller('cyassets/Min/index', '', TRUE);
+		
+		$this->load->view('header');
+		
+	     echo $this->load->api('cy_comments/Comments/message_list', '', TRUE);
+		
+		$this->load->view('footer');
+
+	}
+	
+	public function indedfdsfdsf()
 	{
-		   preg_match('/^webexMatriculas-(.*)-(.*)/','webexMatriculas-TF000000018291-4845a402-5563-4d36-9dfe-db698a81101a-56e098f638b8df84e3d67ec465fc19e5', $matches);
-    
-        echo '<pre>';
-          echo var_dump($matches);
-        echo '</pre>';
-		//var_dump(preg_match('#^permissions/(group|user)/([0-9]+)$#', 'permissions/group/1'));
-		die();
+		
 		
 		 $this->correcaminos->beep_from('users')->or_where('id', 1)->or_where('id',2)->or_where('id',3)->get();
-		 
-		 
+
+
+
+
+
 			 echo '<pre>';
 			   echo var_dump($this->correcaminos->last_query());
 			 echo '</pre>';
@@ -26,8 +37,6 @@ class Welcome extends MY_Controller {
 			 echo '<pre>';
 			   echo var_dump($this->load->controller('Derp/index', '', TRUE));
 			 echo '</pre>';
-		
-		
 		
 		$this->load->library('cyforms/Cyforms');
 		echo $this->cyforms->input_text->options(array(
@@ -128,10 +137,10 @@ class Welcome extends MY_Controller {
 		$this->load->library('correcaminos/correcaminos');
 		$this->load->helper('correcaminos/correcaminos');
 		
-		$this->load->model('cy_upload/Orm_upload_operations');
-		$this->load->model('Prueba_formulario_model');
 
-		if($this->uri->segment('id'))
+		$this->load->model('cy_messages/form_models/Cy_blog_form');
+
+		/*if($this->uri->segment('id'))
 		{
 			$user = $this->correcaminos->beep('user_object')->where('id',$this->uri->segment('id'))->get_one();
 			
@@ -141,10 +150,10 @@ class Welcome extends MY_Controller {
 			}
 
 			$this->Prueba_formulario_model->carga('user_object', $user);
-	 	}
+	 	}*/
 
 
-		$this->Prueba_formulario_model->valid();
+		$this->Cy_blog_form->valid();
 			
 		$this->load->view('myform');
 	}

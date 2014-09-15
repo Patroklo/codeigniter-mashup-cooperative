@@ -281,7 +281,7 @@ class Upload_model extends base_model{
 
 	//posibles añadidos: cambiar nombre a fichero
 
-	private function copy_image($resize_data = FALSE)
+	private function copy_image($resize_data = FALSE, $manual_image_dir = NULL)
 	{
 		$this->load->library('cy_upload/image_moo');
 		if($this->carga === FALSE)
@@ -291,7 +291,6 @@ class Upload_model extends base_model{
 
 		if($this->objectLoaded == TRUE)
 		{
-			$image_dir = $this->carga->get_data('file');
 
 			$data = array(
 				'classid'		=> $this->carga->get_data('classid'),
@@ -319,8 +318,7 @@ class Upload_model extends base_model{
 		}
 		else
 		{
-			
-			$image_dir = $this->carga->file;
+
 
 			$data = array(
 				'classid'		=> $this->carga->classid,
@@ -346,6 +344,19 @@ class Upload_model extends base_model{
 
 			$new_image = $data['file'];
 
+		}
+
+		if (!is_null($manual_image_dir))
+		{
+			$image_dir = $manual_image_dir;
+		}
+		elseif ($this->objectLoaded == TRUE)
+		{
+			$image_dir = $this->carga->get_data('file');
+		}
+		else
+		{
+			$image_dir = $this->carga->file;
 		}
 
 
@@ -420,10 +431,12 @@ class Upload_model extends base_model{
 			return FALSE;
 		}
 
+		$nex_file = NULL;
 
 		foreach($sizes as $key => $size)
 		{
-			$image = $this->copy_image($size);
+			$image = $this->copy_image($size, $nex_file);
+			$nex_file = $image['file'];
 			$lista_copias[$key] = $image['id'];
 		}
 

@@ -603,7 +603,7 @@ class CI_Form_validation {
 						break;
 					}
 				}
-				elseif (is_callable($rule) OR (is_array($rule) && is_callable($rule[1])))
+				elseif (is_callable($rule))
 				{
 					$callback = TRUE;
 					$rules = array(1 => $rule);
@@ -697,9 +697,15 @@ class CI_Form_validation {
 					$callback = TRUE;
 				}
 			}
-			elseif (is_callable($rule) OR (is_array($rule) && is_callable($rule[1])))
+			elseif (is_callable($rule))
 			{
 				$callable = TRUE;
+			}
+			elseif (is_array($rule) && isset($rule[0], $rule[1]) && is_callable($rule[1]))
+			{
+				// We have a "named" callable, so save the name
+				$callable = $rule[0];
+				$rule = $rule[1];
 			}
 
 			// Strip the parameter (if exists) from the rule
@@ -712,7 +718,7 @@ class CI_Form_validation {
 			}
 
 			// Call the function that corresponds to the rule
-			if ($callback OR $callable)
+			if ($callback OR $callable !== FALSE)
 			{
 				if ($callback)
 				{
@@ -729,21 +735,14 @@ class CI_Form_validation {
 				}
 				else
 				{
-					// If rule is callable can still have a name in order
-					// to be able to use callables to validate fields
-					if(!is_callable($rule))
-					{
-						$rule_name 	= $rule[0];
-						$rule		= $rule[1];
-					}
-					
 					$result = is_array($rule)
-							? $rule[0]->{$rule[1]}($postdata, $param)
-							: $rule($postdata, $param);
-					
-					if(isset($rule_name))
+						? $rule[0]->{$rule[1]}($postdata)
+						: $rule($postdata);
+
+					// Is $callable set to a rule name?
+					if ($callable !== FALSE)
 					{
-						$rule = $rule_name;
+						$rule = $callable;
 					}
 				}
 
@@ -804,10 +803,10 @@ class CI_Form_validation {
 			// Did the rule test negatively? If so, grab the error.
 			if ($result === FALSE)
 			{
-				// Callable rules don't have named error messages
+				// Callable rules might not have named error messages
 				if ( ! is_string($rule))
 				{
-					continue;
+					return;
 				}
 
 				// Check if a custom message is defined

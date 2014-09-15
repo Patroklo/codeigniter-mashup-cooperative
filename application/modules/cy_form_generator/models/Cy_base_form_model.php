@@ -549,6 +549,8 @@ class Cy_base_form_model extends CI_Model
 	 */
 	function map() 
 	{
+		$this->load->helper('form');
+		
 		$return_html = '';
 		
 		$form = $this->get_form(array('submit_text' => $this->get_message('submit_button_text')));

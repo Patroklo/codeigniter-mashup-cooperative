@@ -274,6 +274,13 @@
 		protected $form_field_type = "input_password";
 	}
 
+	class textarea extends Cyform_field_base
+	{
+
+		protected $form_field_type = 'textarea';
+		protected $rows;
+
+	}
 
 	class select extends Cyform_field_base
 	{
@@ -304,8 +311,8 @@
 
 		protected $form_field_type = 'checkbox';
 		protected $checked	= FALSE;
-
 	}
+	
 
 	class radio extends Cyform_field_base
 	{

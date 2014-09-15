@@ -194,7 +194,12 @@ abstract class REST_Controller extends CI_Controller
      */
     public function __construct()
     {
-        parent::__construct();
+	    // if we are calling this api controller as an url we will need
+	    // a controller loading for get_instance() initialization
+	    if (get_instance() === NULL)
+	    {
+		    new CI_Controller();
+	    }
 
         // Start the timer for how long the request takes
         $this->_start_rtime = microtime(true);
@@ -316,6 +321,15 @@ abstract class REST_Controller extends CI_Controller
             }
         }
     }
+
+	public function __get($key)
+	{
+
+		//	If you're here because you're getting an error message
+		//	saying 'Undefined Property: system/core/Model.php', it's
+		//	most likely a typo in your model code.
+		return get_instance()->$key;
+	}
 
     /**
      * Destructor function
@@ -1281,7 +1295,7 @@ abstract class REST_Controller extends CI_Controller
             $this->load->library($auth_library_class);
         }
 
-        return $auth_library_class->$auth_library_function($username, $password);
+        return $this->{$auth_library_class}->$auth_library_function($username, $password);
     }
 
     /**

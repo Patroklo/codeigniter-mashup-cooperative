@@ -14,11 +14,13 @@ class Comments extends REST_Controller {
 
 	}
 
-	public function message_list()
+	public function message_list_get()
 	{
 		$reference_id = $this->uri->segment('reference_id');
 		$reference_id = 1;
-		echo $this->Cy_comments_model->show_comments($reference_id);
+
+
+		$this->response(array('hoka', 'adios'),  '201');
 
 	}
 	

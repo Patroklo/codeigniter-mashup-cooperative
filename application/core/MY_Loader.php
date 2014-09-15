@@ -818,9 +818,9 @@ class MY_Loader extends CI_Loader {
 			}
 
 			// Controller class MUST BE EXTENDED FROM AJAX_Controller
-			if(get_parent_class($class) != 'Api_Controller')
+			if(get_parent_class($class) != 'REST_Controller')
 			{
-				throw new Exception("The controller ".$class." must extend Api_Controller.", 1);
+				throw new Exception("The controller ".$class." must extend REST_Controller.", 1);
 			}
 
 			// Create a controller object
@@ -829,10 +829,6 @@ class MY_Loader extends CI_Loader {
 
 		$controller = $this->_ci_apis[strtolower($class)];
 
-		// Method does not exists
-		if ( ! method_exists($controller, $method)) {
-			show_404("{$class}/{$method}");
-		}
 
 		// _remap must be called, if it exists, to mantain integrity
 		// with standard Codeigniter controller calls.

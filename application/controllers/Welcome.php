@@ -24,9 +24,6 @@ class Welcome extends MY_Controller {
 		 $this->correcaminos->beep_from('users')->or_where('id', 1)->or_where('id',2)->or_where('id',3)->get();
 
 
-
-
-
 			 echo '<pre>';
 			   echo var_dump($this->correcaminos->last_query());
 			 echo '</pre>';

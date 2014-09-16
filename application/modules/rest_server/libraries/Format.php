@@ -160,6 +160,8 @@ class Format {
 	// Format HTML for output
 	public function to_html()
 	{
+		return $this->_data;
+
 		$data = (array)$this->_data;
 
 		// Multi-dimensional array

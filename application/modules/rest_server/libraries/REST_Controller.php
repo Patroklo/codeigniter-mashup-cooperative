@@ -179,6 +179,14 @@ abstract class REST_Controller extends CI_Controller
      * @var object
      */
     protected $_apiuser;
+	
+    /**
+     * Value only setted if we are making an $this->load->api() call
+     *
+     * @var object
+     */	
+	protected $_internal_api_call = FALSE;
+	
 
     /**
      * Developers can extend this class and add a check in here.
@@ -205,10 +213,10 @@ abstract class REST_Controller extends CI_Controller
         $this->_start_rtime = microtime(true);
 
         // Lets grab the config and get ready to party
-        $this->load->config('rest');
+        $this->load->config('rest_server/rest');
 
         // This library is bundled with REST_Controller 2.5+, but will eventually be part of CodeIgniter itself
-        $this->load->library('format');
+        $this->load->library('rest_server/Format');
 
         // init objects
         $this->response     = new stdClass();
@@ -322,7 +330,41 @@ abstract class REST_Controller extends CI_Controller
         }
     }
 
-	public function __get($key)
+
+	public function call_from_api($format, $params)
+	{
+		$this->set_rest_format($format);
+		$this->set_manual_parameters($params);
+		
+		$this->_internal_api_call = TRUE;
+		
+	}
+
+	private function set_rest_format($format)
+	{
+		$this->rest_format = $format;
+		$this->response->format = $this->_detect_output_format();
+	}
+
+
+	private function set_manual_parameters($params)
+	{
+		if (empty($params))
+		{
+			return FALSE;
+		}
+
+		$param_name = '_'.$this->request->method.'_args';
+
+		if (is_null($this->{$param_name}))
+		{
+			$this->{$param_name} = array();
+		}
+
+		$this->{$param_name} = array_merge($this->{$param_name}, $params);
+	}
+
+	function __get($key)
 	{
 
 		//	If you're here because you're getting an error message
@@ -458,6 +500,29 @@ abstract class REST_Controller extends CI_Controller
      */
     public function response($data = null, $http_code = null, $continue = false)
     {
+		
+		if ($this->_internal_api_call == TRUE)
+		{
+            if (method_exists($this, '_format_'.$this->response->format)) {
+                // Set the correct format header
+                $output = $this->{'_format_'.$this->response->format}($data);
+            }
+
+            // If the format method exists, call and return the output in that format
+            elseif (method_exists($this->format, 'to_'.$this->response->format)) {
+                // Set the correct format header
+                $output = $this->format->factory($data)->{'to_'.$this->response->format}();
+            }
+
+            // Format not supported, output directly
+            else {
+                $output = $data;
+            }
+			
+			echo $output;
+			return;
+		}
+		
         // If data is null and not code provide, error and bail
         if ($data === null && $http_code === null) {
             $http_code = 404;

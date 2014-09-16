@@ -127,6 +127,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 
 	Route::any('welcome', 		'Welcome/index');
+	
+	Route::any('min', 			'cyassets/Min/index');
+	
+	Route::any('welcome2', 		'Welcome/index');
+	
 	Route::any('prueba', 		'Welcome/prueba_forms');
 	Route::any('prueba/{id}', 	'Welcome/prueba_forms/$1', 				array('before' => 'prueba[1:{id}]'))->where('id', '(:num)');
 	

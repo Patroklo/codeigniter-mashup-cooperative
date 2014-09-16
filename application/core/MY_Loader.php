@@ -445,7 +445,7 @@ class MY_Loader extends CI_Loader {
             // Load the controller file
             if (file_exists($filepath)) {
             	
-				$this->_include_class('core/AJAX_Controller.php');
+				$this->_include_class('core/Ajax_Controller.php');
                 include_once ($filepath);
             }
 
@@ -755,7 +755,7 @@ class MY_Loader extends CI_Loader {
 	}
 
 
-	public function api($uri, $params = array(), $return = FALSE)
+	public function api($uri, $params = array(), $format = 'html')
 	{
 		// No valid module detected, add current module to uri
 		list($module) = $this->detect_module($uri);
@@ -771,12 +771,12 @@ class MY_Loader extends CI_Loader {
 		$this->add_module($module);
 
 		// Execute the controller method and capture output
-		$void = $this->_load_api($uri, $params, $return);
+		$return = $this->_load_api($uri, $params, $format);
 
 		// Remove module
 		$this->remove_module();
 
-		return $void;
+		return $return;
 	}
 
 	/**
@@ -789,7 +789,7 @@ class MY_Loader extends CI_Loader {
 	 * @param	boolean
 	 * @return	object
 	 */
-	private function _load_api($uri = '', $params = array(), $return = FALSE) {
+	private function _load_api($uri = '', $params = array(), $format = 'html') {
 
 		$router = & $this->_ci_get_component('router');
 		// Locate the controller
@@ -828,38 +828,24 @@ class MY_Loader extends CI_Loader {
 		}
 
 		$controller = $this->_ci_apis[strtolower($class)];
-
+		$controller->call_from_api($format, $params);
 
 		// _remap must be called, if it exists, to mantain integrity
 		// with standard Codeigniter controller calls.
-		if(method_exists($controller, '_remap'))
-		{
-			if(!is_array($params))
-			{
-				$params = array($params);
-			}
 
-			$params = array($method, $params);
-			$method = '_remap';
-		}
+		$params = array($method, (!is_array($params)?array($params):$params));
+		
+		$method = '_remap';
 
 		// Capture output and return
-
 		ob_start();
 		$result = call_user_func_array(array(&$controller, $method), $params);
+    	
+        // Return the buffered output
+        $buffer = ob_get_contents();
+        @ob_end_clean();
+        return $buffer;
 
-		// Return the buffered output
-		if ($return === TRUE) {
-			$buffer = ob_get_contents();
-			@ob_end_clean();
-			return $buffer;
-		}
-
-		// Close buffer and flush output to screen
-		ob_end_flush();
-
-		// Return controller return value
-		return $result;
 	}
 
 }

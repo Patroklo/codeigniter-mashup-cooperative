@@ -7,8 +7,16 @@
 	
 		function __construct()
 		{
+			if (get_instance() === NULL)
+			{
+				new CI_Controller();
+			}	
+			
 			//parent::__construct();
 			$this->CI	=& get_instance();
+			
+			
+			
 		}
 	
 		public function index()

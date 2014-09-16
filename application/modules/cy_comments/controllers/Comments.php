@@ -18,9 +18,8 @@ class Comments extends REST_Controller {
 	{
 		$reference_id = $this->uri->segment('reference_id');
 		$reference_id = 1;
-
-
-		$this->response(array('hoka', 'adios'),  '201');
+// $this->Cy_comments_model->show_comments($reference_id)
+		$this->response(array('hola' => '1', 'adios'),  '200');
 
 	}
 	
@@ -32,6 +31,5 @@ class Comments extends REST_Controller {
 		echo $this->Cy_comments_model->show_comments($reference_id);
 
 	}
-	
-	
+
 }

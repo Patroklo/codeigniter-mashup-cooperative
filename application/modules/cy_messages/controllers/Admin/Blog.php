@@ -23,7 +23,7 @@ class Blog extends MY_Controller {
 
 		if ($this->Cy_blog_form->valid())
 		{
-			redirect(Route::named('blog/list'));
+			redirect(Route::named('admin/blog/list'));
 		}
 
 		$this->load->view('cy_messages/blogs/new_post_view');
@@ -37,7 +37,7 @@ class Blog extends MY_Controller {
 
 		if ($this->Cy_blog_form->valid())
 		{
-			redirect(Route::named('blog/list'));
+			redirect(Route::named('admin/blog/list'));
 		}
 
 		$this->load->view('cy_messages/blogs/new_post_view');
@@ -46,8 +46,8 @@ class Blog extends MY_Controller {
 	public function delete_post()
 	{
 		$this->Cy_blog_model->delete();
-		
-		redirect(base_url());
+
+		redirect(Route::named('admin/blog/list'));
 	}
 
 

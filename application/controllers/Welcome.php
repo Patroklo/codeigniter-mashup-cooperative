@@ -11,9 +11,12 @@ class Welcome extends MY_Controller {
 		
 		$this->load->view('header');
 		
-	     echo $this->load->api('cy_comments/Comments/message_list', '', TRUE);
-		
-		$this->load->view('footer');
+	   // echo $this->load->api('cy_comments/Comments/message_list', '');
+	    $this->load->library('disqus/Disqus');
+
+	    $data['a'] = $this->disqus->show_comments();
+
+		$this->load->view('footer', $data);
 
 	}
 	

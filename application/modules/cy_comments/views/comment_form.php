@@ -1,5 +1,6 @@
 <?php
-	
+
+	echo '<div class="error_comments"></div>';
 	
 	$fieldNames = $this->Cy_comments_form->get_fields(TRUE);
 	

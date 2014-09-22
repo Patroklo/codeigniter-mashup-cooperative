@@ -2,9 +2,7 @@
 
 	class Disqus
 	{
-		
-		public $carga;
-		
+
 		private $CI;
 		
 		function __construct()
@@ -17,37 +15,55 @@
 			
 			$secret_key = $this->CI->config->item('disqus.api.secret_key');
 			
+			$key = $this->CI->config->item('disqus.api.key');
+			
+			$access_token = $this->CI->config->item('disqus.api.access_token');
+			
 			if ($secret_key != '')
 			{
 				$this->CI->disqusapi->setKey($secret_key);
 			}
+			
+			if ($key != '')
+			{
+				$this->CI->disqusapi->setPublicKey($key);
+			}
+			
+			if ($access_token != '')
+			{
+				$this->CI->disqusapi->setToken($access_token);
+			}		
 		}
-		
-		function carga($object)
+
+		// simplest way of using disqus comments
+		// uses url as identifier
+		function simple_show_comments()
 		{
-			$this->carga = $object;
+			$shortname = $this->CI->config->item('disqus.shortname');
+
+			$category_id = $this->CI->config->item('disqus.category_id');
+			
+			// loads the javascript to make the disqus form
+			
+			$this->CI->load->library('Js_load');
+			
+			$this->CI->js_load->add("disqus.show_form('".$shortname."')");
+
+			return '<div id="disqus_thread"></div>';
 		}
 
 		/**
-		 * Basic show comments method
+		 * Basic show comments method (passing identifier)
 		 *
 		 * @return string
 		 */
-		function show_comments()
+		function show_comments($comment_type, $reference_id)
 		{
-
 			$shortname = $this->CI->config->item('disqus.shortname');
 			
-			// identifier will be set by object id
+			// identifier will be set manually
+			$identifier = $comment_type.'_'.$reference_id;
 			
-			if ($this->carga === NULL)
-			{
-				$identifier = 'null';
-			}
-			else
-			{
-				$identifier = get_class($this->carga).'_'.$this->carga->get_data('id');
-			}
 			
 			$title	   = $this->CI->config->item('disqus.title');
 			
@@ -73,24 +89,16 @@
 
 		/**
 		 * Will use api to make a new category if neccesary
-		 *
+		 * and add the identifier
 		 *
 		 */
-		function api_show_comments()
+		function api_show_comments($comment_type, $reference_id)
 		{
 			$shortname = $this->CI->config->item('disqus.shortname');
 
-			// identifier will be set by object id
-
-			if ($this->carga === NULL)
-			{
-				$identifier = 'null';
-			}
-			else
-			{
-				$identifier = $this->carga->get_data('id');
-			}
-
+			// identifier will be set manually
+			$identifier = $reference_id;
+			
 			$title	   = $this->CI->config->item('disqus.title');
 
 			if ($this->CI->config->item('disqus.url') == TRUE)
@@ -102,7 +110,7 @@
 				$url = 'null';
 			}
 
-			$category_id = $this->_get_category($shortname);
+			$category_id = $this->_get_category($shortname, $comment_type);
 
 			// loads the javascript to make the disqus form
 
@@ -114,19 +122,22 @@
 		}
 
 
-		private function _get_category($shortname)
+		private function _get_category($shortname, $comment_type)
 		{
 			$category_list = $this->CI->disqusapi->categories->list(array('forum' => $shortname));
 
-			$search_name =  get_class($this->carga);
+    echo '<pre>';
+      echo var_dump($category_list);
+    echo '</pre>';
+			$search_name =  $comment_type;
 
 			$cat_id = FALSE;
 
 			foreach ($category_list as $cat)
 			{
-				if ($cat['title'] == $search_name)
+				if ($cat->title == $search_name)
 				{
-					$cat_id = $cat['id'];
+					$cat_id = $cat->id;
 				}
 			}
 
@@ -135,9 +146,12 @@
 				// we make a new category for this object
 				$category_data = $this->CI->disqusapi->categories->create(array('forum' => $shortname, 'title' => $search_name));
 
-				$cat_id = $category_data['id'];
+				$cat_id = $category_data->id;
 			}
 
+    echo '<pre>';
+      echo var_dump($cat_id);
+    echo '</pre>';
 			return $cat_id;
 
 		}

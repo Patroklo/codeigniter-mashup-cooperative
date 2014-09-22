@@ -10,7 +10,7 @@
 |
 |
 */
-$config['disqus.shortname'] = 'derplkjlkj';
+$config['disqus.shortname'] = 'pruebajeroenci2';
 
 /*
 |--------------------------------------------------------------------------
@@ -50,10 +50,8 @@ $config['disqus.category_id'] = 'null';
 | DISQUS Api key
 |--------------------------------------------------------------------------
 |
-| if true will set the url from the actual url string
-|
 */
-$config['disqus.api.key'] = 'ZnydWBUuVwJi7wHLGnP1j2NhaZKn9rjrl2uxHomOtqszzH6nrjfBD1zYSuFTzfyP';
+$config['disqus.api.key'] = '8NRtD1TOk29gHsUi889jvsxmxCBdnFhkDIeZs30kR4sVmN6eRYWRmmCPvCuUPL7l';
 
 
 /*
@@ -61,10 +59,18 @@ $config['disqus.api.key'] = 'ZnydWBUuVwJi7wHLGnP1j2NhaZKn9rjrl2uxHomOtqszzH6nrjf
 | DISQUS Api secret_key
 |--------------------------------------------------------------------------
 |
+*/
+$config['disqus.api.secret_key'] = 'LJV1hwFon4Y9nH0h2vdLXkO6mlelAxMfnkleAVjC2pPAdvW2qpEejWClLHlsQq40';
+
+/*
+|--------------------------------------------------------------------------
+| DISQUS Api access_token
+|--------------------------------------------------------------------------
+|
 | if true will set the url from the actual url string
 |
 */
-$config['disqus.api.secret_key'] = '5nklSHPnGDDZrp7L5wE8xq4brVTryV5wG4PywZ2K4s9VmhR2fQtG8224Oa2znRYw';
+$config['disqus.api.access_token'] = 'e1d11140660a4ce4bbce074764c39188';
 
 
 /* End of file config.php */

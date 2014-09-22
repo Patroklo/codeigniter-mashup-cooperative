@@ -32,24 +32,6 @@ if (!defined("BASEPATH"))
 			}
 		}
 		
-		// public function delete($function, $type)
-		// {
-			// if (is_array($function))
-			// {
-				// foreach ($function as $f)
-				// {
-					// $this->delete($f, $type);
-				// }
-			// }
-			// else
-			// {
-				// if (array_key_exists($function, $this->js_list))
-				// {
-					// unset($this->js_list[$function]);
-				// }
-			// }
-		// }
-		
 		public function list_methods($type = 'footer')
 		{
 			$return_data = '';
@@ -58,6 +40,10 @@ if (!defined("BASEPATH"))
 			{
 				$return_data.= '<script src="'.base_url().'/js/footer.js"></script>
 								<script>
+									
+									var base_url = "'.base_url().'";
+									var in_html  = "?format=html";
+								
 									$(\'document\').ready(function () {';
 										
 										foreach ($this->js_list[$type] as $j)

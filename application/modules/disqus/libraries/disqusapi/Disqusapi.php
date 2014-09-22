@@ -88,6 +88,16 @@ class DisqusResource {
         if (empty($kwargs['api_secret'])) {
             $kwargs['api_secret'] = $api->key;
         }
+		
+		if (empty($kwargs['access_token']) and isset($api->access_token))
+		{
+			$kwargs['access_token'] = $api->access_token;
+		}
+		
+		if (empty($kwargs['api_key']) and isset($api->api_key))
+		{
+			$kwargs['api_key'] = $api->api_key;
+		}	
 
         // emulate a named pop
         $version = (!empty($kwargs['version']) ? $kwargs['version'] : $api->version);
@@ -105,7 +115,6 @@ class DisqusResource {
                 $path .= '?'.dsq_get_query_string($kwargs);
             }
         }
-
 
         $response = dsq_urlopen($url.$path, $post_data);
 
@@ -147,4 +156,14 @@ class Disqusapi extends DisqusResource {
     public function setVersion($version) {
         $this->version = $version;
     }
+	
+	public function setPublicKey($key)
+	{
+		$this->api_key = $key;
+	}
+	
+	public function setToken($token)
+	{
+		$this->access_token = $token;
+	}
 }

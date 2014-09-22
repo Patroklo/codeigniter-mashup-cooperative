@@ -160,14 +160,14 @@
 			$this->ORM_QueryBuilder = $this->ORM_QueryBuilder->limit(1);
 			
 			$data = parent::get_data();
-			
-			if($data === FALSE)
+
+			if($data === FALSE or empty($data))
 			{
 				return FALSE;
 			}
 			
 			$data = reset($data);
-			
+
 			return array($data->get_data($this->join_data['referencedColumnName']) => $data);
 
 		}

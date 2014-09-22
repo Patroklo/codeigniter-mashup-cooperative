@@ -645,6 +645,34 @@
 		}
 	}
 
+	class Recaptcha_Bootstrap_field extends Form_Bootstrap
+	{
+		function set_value($value)
+		{
+
+		}
+
+		function get_field($extra_data = array())
+		{
+
+			$this->_CI->load->library('cy_form_generator/Recaptcha');
+
+			return  $this->_CI->recaptcha->recaptcha_get_html();
+
+		}
+	}
+
+	class Hidden_Bootstrap_field extends  Form_Bootstrap
+	{
+		function get_field($extra_data = array())
+		{
+			$this->_CI->load->helper('form');
+
+			return '<input type="hidden" id="'.$this->get_name().'" name="'.$this->get_name().'" value="'.$this->get_value().'" />';
+
+		}
+	}
+
 
 
 

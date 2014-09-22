@@ -197,11 +197,11 @@
 				$data_original['message_type']  = $this->message_type;
 				
 				$query		  = $this->get_query()->where($data_original)->
-													 or_where($data_answers)->
-													 offset($offset);
+													 or_where($data_answers);
+
 				if($limit != FALSE)
 				{
-					$query	  = $query->limit($limit);
+					$query	  = $query->limit($limit)->offset($offset);;
 				}
 				
 				$this->stream = $this->check_anonymous($query->get());
@@ -230,11 +230,11 @@
 				$data_original['message_type']  = $this->message_type;
 
 				
-				$query		  = $this->get_query()->where($data_original)->
-													offset($offset);
+				$query		  = $this->get_query()->where($data_original);
 				if($limit != FALSE)
 				{
-					$query	  = $query->limit($limit);
+					$query	  = $query->limit($limit)->
+										offset($offset);;
 				}
 				
 				$this->stream = $query->get();
@@ -264,13 +264,13 @@
 
 			protected function check_anonymous($message_list)
 			{
-				$this->load->model('auth/Ion_auth_model');
-
 				if ( ! is_array($message_list))
 				{
 					if ($message_list->get_data('user_id') == 0)
 					{
-						$anonymous_user = new $this->Ion_auth_model->anonymous_object(
+						$this->load->model('auth/Ion_auth_model');
+
+						$anonymous_user = $this->ion_auth_model->anonymous_object(
 														array(
 																'id'         => 0,
 																'first_name' => $message_list->get_data('anonymous_name'),

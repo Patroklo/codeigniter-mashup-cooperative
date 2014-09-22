@@ -188,7 +188,7 @@ class Cy_base_form_model extends CI_Model
 		else
 		{
 			$this->post_data = $this->input->post();
-			
+
 			if($this->auto_save === TRUE)
 			{
 				$this->save();
@@ -200,7 +200,7 @@ class Cy_base_form_model extends CI_Model
 	 
 	 protected function check_errors($fields = NULL)
 	 {
-	 	
+
 		$return_bool = TRUE;
 		
 	 	if($fields === NULL)
@@ -216,7 +216,7 @@ class Cy_base_form_model extends CI_Model
 			
 			$fields =  array_intersect_key($this->fields, array_flip($fields));
 		}
-		
+
 		if($this->form_validation->run() === FALSE)
 		{
 

@@ -131,11 +131,22 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 	Route::any('min', 			'cyassets/Min/index');
 	
 	Route::any('welcome2', 		'Welcome/index');
+	Route::any('welcome3', 		'Welcome/index');
+	Route::any('welcome4', 		'Welcome/index');
+	Route::any('welcome5', 		'Welcome/index');
+	Route::any('welcome6', 		'Welcome/index');
+	Route::any('welcome7', 		'Welcome/index');
+	Route::any('welcome8', 		'Welcome/index');
+	Route::any('welcome9', 		'Welcome/index');
+	Route::any('welcome10', 		'Welcome/index');
+	Route::any('welcome11', 		'Welcome/index');
+	
+	Route::any('derp', 			'Welcome/index');
 	
 	Route::any('prueba', 		'Welcome/prueba_forms');
 	Route::any('prueba/{id}', 	'Welcome/prueba_forms/$1', 				array('before' => 'prueba[1:{id}]'))->where('id', '(:num)');
 	
-	Route::any('Derp/index',	'',										array('before' => 'derp'));
+	
 	
 	$route = Route::map();
 

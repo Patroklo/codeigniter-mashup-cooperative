@@ -14,8 +14,14 @@ class Welcome extends MY_Controller {
 	   // echo $this->load->api('cy_comments/Comments/message_list', '');
 	    $this->load->library('disqus/Disqus');
 
-	    $data['a'] = $this->disqus->show_comments();
-
+	    // $data['a'] = $this->load->api('cy_comments/Comments/list', array('reference_id' => '1', 'inner_id' => '1'));
+	    $this->load->model('cy_comments/Cy_comments_model');
+	    $data['a'] = $this->Cy_comments_model->show_comments(1, 1);
+	    
+	    // $data['a'] = $this->disqus->show_comments('blogs', '5');
+	   
+		// $data['a'] = $this->disqus->simple_show_comments();
+		
 		$this->load->view('footer', $data);
 
 	}
@@ -132,30 +138,6 @@ class Welcome extends MY_Controller {
 	public function prueba_forms()
 	{
 		
-
-		
-		$this->load->library('correcaminos/correcaminos');
-		$this->load->helper('correcaminos/correcaminos');
-		
-
-		$this->load->model('cy_messages/form_models/Cy_blog_form');
-
-		/*if($this->uri->segment('id'))
-		{
-			$user = $this->correcaminos->beep('user_object')->where('id',$this->uri->segment('id'))->get_one();
-			
-			if(empty($user))
-			{
-				show_404();
-			}
-
-			$this->Prueba_formulario_model->carga('user_object', $user);
-	 	}*/
-
-
-		$this->Cy_blog_form->valid();
-			
-		$this->load->view('myform');
 	}
 
 	 public function password_check($str)

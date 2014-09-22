@@ -1469,8 +1469,6 @@ class Ion_auth_model extends CI_Model
 			return FALSE;
 		}
 
-		//borrar
-		//$user = $this->user($id)->row();
 		$user = $this->correcaminos->beep($this->user_object)->where('id', $id)->row();
 
 		$salt = $this->salt();
@@ -1998,6 +1996,8 @@ class Ion_auth_model extends CI_Model
 		{
 			$anon_data->{$key} = $d;
 		}
+
+		$this->correcaminos->load_object($this->user_object);
 
 		return new $this->user_object($anon_data);
 	}

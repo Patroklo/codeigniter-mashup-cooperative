@@ -12,57 +12,69 @@
 				new CI_Controller();
 			}	
 			
-			//parent::__construct();
 			$this->CI	=& get_instance();
-			
-			
-			
+
 		}
 	
 		public function index()
 		{
-	
-			$this->CI->load->config('cyassets/assets');
-	
-			include 'less/lessc.inc.php';
-	
-			try
+
+			if ($_SERVER['QUERY_STRING'] == 'css' OR $_SERVER['QUERY_STRING'] == 'all')
 			{
-				foreach ($this->CI->config->item('cyassets.less') as $origin => $destiny)
+				$this->CI->load->config('cyassets/assets');
+
+				include 'less/lessc.inc.php';
+				try
 				{
-				    lessc::ccompile($origin, $destiny);
+					foreach ($this->CI->config->item('cyassets.less') as $origin => $destiny)
+					{
+						lessc::ccompile($origin, $destiny);
+					}
 				}
+				catch (exception $ex)
+				{
+					exit('lessc fatal error:<br />'.$ex->getMessage());
+				}
+
+
+				$this->CI->load->driver('cyassets/Minify');
+
+				$css	= $this->CI->minify->combine_files($this->CI->config->item('cyassets.css'));
+
+				$this->CI->minify->save_file($css, 'css/styles.css');
 			}
-			catch (exception $ex)
+
+			if ($_SERVER['QUERY_STRING'] == 'js' OR $_SERVER['QUERY_STRING'] == 'all')
 			{
-			    exit('lessc fatal error:<br />'.$ex->getMessage());
-			}
-	
-	
-			$this->CI->load->driver('cyassets/Minify');
-	
-			$css	= $this->CI->minify->combine_files($this->CI->config->item('cyassets.css'));
-	
-			$this->CI->minify->save_file($css, 'css/styles.css');
-	
-			$js = '';
-			if ( ! empty($this->CI->config->item('cyassets.js.header')))
-			{
-				$archives = array_merge($this->CI->config->item('cyassets.js.header'), $this->get_module_files('js', 'header.js'));
-				$js	= $this->CI->minify->combine_files($archives);
-				$this->CI->minify->save_file($js, 'js/header.js');
-			}
-			$js = '';
-			if ( ! empty($this->CI->config->item('cyassets.js.footer')))
-			{
-				$archives = array_merge($this->CI->config->item('cyassets.js.footer'), $this->get_module_files('js', 'footer.js'));
-				$js	= $this->CI->minify->combine_files($archives);
-				$this->CI->minify->save_file($js, 'js/footer.js');
+				$this->CI->load->config('cyassets/assets');
+
+				$this->CI->load->driver('cyassets/Minify');
+
+				$js = '';
+
+				$header_files = $this->CI->config->item('cyassets.js.header');
+
+				if ( ! empty($header_files))
+				{
+					$archives = array_merge($header_files, $this->get_module_files('js', 'header'));
+					$js	= $this->CI->minify->combine_files($archives);
+					$this->CI->minify->save_file($js, 'js/header.js');
+				}
+				$js = '';
+
+				$footer_files = $this->CI->config->item('cyassets.js.footer');
+
+				if ( ! empty($footer_files))
+				{
+					$archives = array_merge($footer_files, $this->get_module_files('js', 'footer'));
+					$js	= $this->CI->minify->combine_files($archives);
+					$this->CI->minify->save_file($js, 'js/footer.js');
+				}
 			}
 	
 		}
 		
-		private function get_module_files($format = 'js', $type = 'header.js')
+		private function get_module_files($format = 'js', $type = 'header')
 		{
 			$path = APPPATH.'modules';
 			
@@ -76,9 +88,16 @@
 			    {
 				    if (is_dir($path.'/'.$file->getFilename().'/js'))
 					{
-						if (file_exists($path.'/'.$file->getFilename().'/js/'.$type))
+						if (is_dir($path.'/'.$file->getFilename().'/js/'.$type))
 						{
-							$return_array[] = $path.'/'.$file->getFilename().'/js/'.$type;
+							// get all files under footer or header directory
+							foreach (new FilesystemIterator($path.'/'.$file->getFilename().'/js/'.$type) as $type_file)
+							{
+								if ($type_file->isFile())
+								{
+									$return_array[] = $path.'/'.$file->getFilename().'/js/'.$type.'/'.$type_file->getFilename();
+								}
+							}
 						}
 					}
 			    }

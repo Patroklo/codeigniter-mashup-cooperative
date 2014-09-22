@@ -62,7 +62,8 @@ use Correcaminos\Database\Driver,
             $db_conn['benchmark'] 		= FALSE;
 			$db_conn['post_benchmarking'] = FALSE;
             $db_conn['autoinit']		= TRUE;
-            $db_conn['error_mode'] 		= '';
+			// WARNING EXCEPTION
+            $db_conn['error_mode'] 		= 'EXCEPTION';
 			
 
 

@@ -1,0 +1,1 @@
+Tienes que estar logeado para poder comentar aquí. Enlace login blah.

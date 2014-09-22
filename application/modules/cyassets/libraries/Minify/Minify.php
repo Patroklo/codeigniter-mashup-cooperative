@@ -164,7 +164,7 @@ class Minify extends CI_Driver_Library {
 				$type = $this->_get_type($file);
 			}
 
-			$path_info = pathinfo($file, PATHINFO_BASENAME); // Referal File and path
+			$path_info = pathinfo($file, PATHINFO_DIRNAME).'/'.pathinfo($file, PATHINFO_BASENAME); // Referal File and path
 
 			if ($type == 'css')
 			{

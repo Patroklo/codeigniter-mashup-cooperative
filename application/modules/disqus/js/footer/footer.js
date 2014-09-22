@@ -6,22 +6,22 @@ var disqus	= {
         // required: replace example with your forum shortname
         if (identifier != 'null')
 		{
-	   		var disqus_identifier = identifier;
+	   		disqus_identifier = identifier;
 	    }
 	    
         if (title != 'null')
 		{
-	   		var disqus_title = title;
+	   		disqus_title = title;
 	    }
 	    
 	    if (url != 'null')
 		{
-	   		var disqus_url = url;
+	   		disqus_url = url;
 	    }
 	    
 	    if (category_id != 'null')
 		{
-	   		var disqus_category_id = category_id;
+	   		disqus_category_id = category_id;
 	    }
 
         /* * * DON'T EDIT BELOW THIS LINE * * */

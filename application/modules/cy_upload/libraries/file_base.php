@@ -182,33 +182,31 @@ class file_base extends Correcaminos\Objects\base{
 				$this->reference_id = $this->get_data('innerid');
 			}
 			
-			if(is_null($this->reference_id))
+			if(is_null($this->reference_id) and $this->_get_state() == 'INSERT')
 			{
 				throw new Exception("The reference id of the object type ".get_class($this)." it's not defined.", 1);
 			}
 			
-			if ( empty($_FILES) or $file_upload_on == FALSE)
+			if ( (empty($_FILES) and ($this->_get_state() == 'UPDATE' or $this->_get_state() == 'INSERT') ) or $file_upload_on == FALSE)
 			{
 				ORM_Operations::save_object($this);
 			}
 			else 
 			{
+				$state = $this->_get_state();
+
 				$CI->load->model('cy_upload/ORM_Upload_Operations');
 				$CI->Orm_upload_operations->save_object($this);
-				
-				$this->_copy_image();
+				$this->_state = NULL;
+				if ($state == 'INSERT' or $state == 'UPDATE')
+				{
+					$this->_copy_image();
+				}
 			}
-
-			$this->_state = NULL;
 		}
 		 
 		 public function _copy_image()
 		 {
-
-		 	if( ! $this->_object_loaded())
-			{
-				return FALSE;
-			}
 
 			if ( ! empty($this->copies))
 			{

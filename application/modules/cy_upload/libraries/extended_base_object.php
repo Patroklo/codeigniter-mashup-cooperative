@@ -104,14 +104,16 @@ class extended_base_object extends Correcaminos\Objects\base{
 				$copies_ids = json_decode($copies_ids, TRUE);
 				
 				$copies_flip = array_flip($copies_ids);
-				
+
 				$query = beep($file_fieldName)->where_in('id', $copies_ids)->get();
-				
-				foreach ($query->result() as $copy_object)
+
+				if ( ! empty($query))
 				{
-					$this->field_object[$file_fieldName][$copies_flip[$copy_object->get_data('id')]] = $copy_object;
+					foreach ($query as $copy_object)
+					{
+						$this->field_object[$file_fieldName][$copies_flip[$copy_object->get_data('id')]] = $copy_object;
+					}
 				}
-				
 			}
 		}
 		

@@ -191,6 +191,8 @@ class Upload_engine extends CI_Model{
 			{
 				$update_data['exif'] 	= json_encode($exif_data);
 			}
+
+			$data['exif'] = $update_data['exif'];
 		}
 
 		beep_from($this->tableName)->where('id', $id)->values($update_data)->update();

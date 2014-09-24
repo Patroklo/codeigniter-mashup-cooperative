@@ -13,6 +13,7 @@ class Orm_upload_operations extends CI_Model {
 	public $rules	  		= FALSE;
 	public $reference_id	= FALSE;
 	public $fieldName		= FALSE;
+	public $classObject     = FALSE;
 	
 	function __construct($config = array())
 	{
@@ -69,7 +70,8 @@ class Orm_upload_operations extends CI_Model {
 			$object_table = $object_data->get_table();
 			
 			$config_data = $object->get_config_data();
-			
+
+			$this->classObject  = $class_object;
 			$this->directory 	= $config_data['directory'];
 			$this->rules	 	= $config_data['rules'];
 			$this->className 	= $config_data['className'];
@@ -126,6 +128,7 @@ class Orm_upload_operations extends CI_Model {
 
 		if($insert_data !== FALSE)
 		{
+			$this->delete_copies($id);
 			$this->Upload_engine->initialize($this->engine_initialization_data());
 			$this->Upload_engine->delete($id);
 		}
@@ -134,7 +137,9 @@ class Orm_upload_operations extends CI_Model {
 	private function delete($object)
 	{
 		$id = $object->get_data('id');
-		
+
+		$this->delete_copies($id);
+
 		$this->Upload_engine->initialize($this->engine_initialization_data());
 		
 		$this->Upload_engine->delete($id);
@@ -147,9 +152,39 @@ class Orm_upload_operations extends CI_Model {
 		return $this->rules;
 	}
 
+	private function delete_copies($id)
+	{
+
+		$object = $this->correcaminos->beep($this->classObject)->where('id', $id)->get_one();
+
+		// borramos también todas las copias
+		$copies = $object->get_data('copies');
+
+		if ($copies != NULL or $copies != '')
+		{
+
+			$copies = json_decode($copies, TRUE);
+
+			$class_object = get_class($object);
+
+			$copies_objects = $this->correcaminos->beep($class_object)->where_in('id', $copies)->get();
+
+			foreach ($copies_objects as $copy_object)
+			{
+				$this->Upload_engine->initialize($this->engine_initialization_data());
+
+				$this->Upload_engine->delete($copy_object->get_data('id'));
+				// $copy_object->delete();
+				// $copy_object->save();
+			}
+
+		}
+	}
+
 
 	public function copy_image($object, $resize_data_arr)
 	{
+
 		$image_file = $object->get_data('file');
 		
 		$class_object = get_class($object);
@@ -168,7 +203,6 @@ class Orm_upload_operations extends CI_Model {
 								'format'		=> $object->get_data('format'),
 								'exif'			=> $object->get_data('exif'),
 								);
-
 
 
 		foreach ($resize_data_arr as $name => $resize_data)

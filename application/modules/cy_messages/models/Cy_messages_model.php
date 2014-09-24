@@ -87,6 +87,10 @@
 				$this->carga = FALSE;
 			}
 	
+			function me() {
+				return beep_from($this -> tableName);
+			}
+	
 			/**
 			 * Inserts new message
 			 *
@@ -115,8 +119,12 @@
 
 				$new_id = beep_from($this->tableName)->values($data)->insert();
 
-				$data = array();
-				$data['message_url']    = url_title($data['message_title'].'_'.$new_id, '_', TRUE);
+
+				
+				if ( ! array_key_exists('message_url', $data))
+				{
+					$data['message_url']    = url_title($data['message_title'].'_'.$new_id, '_', TRUE);
+				}
 
 				beep_from($this->tableName)->values($data)->where('id', $new_id)->update();
 
@@ -225,7 +233,12 @@
 				}
 				
 				$data_original 					= array();
-				$data_original['reference_id']	= $reference_id;
+				
+				if ( ! is_null($reference_id))
+				{
+					$data_original['reference_id']	= $reference_id;
+				}
+
 				$data_original['parent_id']		= 0;
 				$data_original['message_type']  = $this->message_type;
 

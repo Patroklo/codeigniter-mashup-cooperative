@@ -13,7 +13,7 @@ class Blog extends MY_Controller {
 	{
 		$reference_id = 0;
 			
-		$this->data->post_list = $this->Cy_blog_model->load_reference_stream($reference_id);
+		$this->data->post_list = $this->Cy_blog_model->load_reference_stream(NULL);
 		
 		$this->load->view('cy_messages/blogs/post_list', $this->data);
 	}

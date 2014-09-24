@@ -17,6 +17,10 @@ class Auth_controller extends MY_Controller {
 
 		$this->lang->load('auth');
 		$this->load->helper('language');
+
+		$this->template->title->set('Panel de administración');
+		$this->template->set_template('auth/auth/auth_template');
+
 	}
 
 
@@ -24,9 +28,8 @@ class Auth_controller extends MY_Controller {
 	//create a new user
 	function create_user()
 	{
-		
-		$this->data['title'] = "Create User";
-		
+		$this->template->title->set('Create User');
+
 		$this->load->library('auth/ion_auth');
 
 		$tables = $this->config->item('tables','ion_auth');
@@ -117,8 +120,7 @@ class Auth_controller extends MY_Controller {
 	//log the user in
 	function login()
 	{
-		$this->data['title'] = "Login";
-
+		$this->template->title->set('Login');
 		//validate form input
 		$this->form_validation->set_rules('identity', 'Identity', 'required');
 		$this->form_validation->set_rules('password', 'Password', 'required');
@@ -160,6 +162,7 @@ class Auth_controller extends MY_Controller {
 				'type' => 'password',
 			);
 
+
 			$this->_render_page('auth/auth/login', $this->data);
 		}
 	}
@@ -174,7 +177,7 @@ class Auth_controller extends MY_Controller {
 
 		//redirect them to the login page
 		$this->session->set_flashdata('message', $this->ion_auth_model->messages());
-		redirect(base_url(), 'refresh');
+		redirect(Route::named('login'), 'refresh');
 	}
 
 
@@ -203,21 +206,21 @@ class Auth_controller extends MY_Controller {
 		}
 		else
 		{
-			
+
 			$this->load->library('auth/ion_auth');
 
 			$identity = $this->ion_auth_model->users()->where($this->config->item('identity', 'ion_auth'), strtolower($this->input->post('email')))->row();
-			
-	        if (empty($identity)) 
-	        {
-		    	$this->ion_auth->set_message('forgot_password_email_not_found');
-		    	$this->session->set_flashdata('message', $this->ion_auth->messages());
-                redirect(current_url(), 'refresh');
-            }
+
+			if (empty($identity))
+			{
+				$this->ion_auth->set_message('forgot_password_email_not_found');
+				$this->session->set_flashdata('message', $this->ion_auth->messages());
+				redirect(current_url(), 'refresh');
+			}
 
 			//run the forgotten password method to email an activation code to the user
 			$forgotten = $this->ion_auth->forgotten_password($identity->get_data($this->config->item('identity', 'ion_auth')));
-			
+
 			if ($forgotten)
 			{
 				//if there were no errors
@@ -244,7 +247,7 @@ class Auth_controller extends MY_Controller {
 			$code = $this->uri->segment('code');
 		}
 
- 		$this->load->library('auth/ion_auth');
+		$this->load->library('auth/ion_auth');
 
 		$user = $this->ion_auth->forgotten_password_check($code);
 
@@ -266,7 +269,7 @@ class Auth_controller extends MY_Controller {
 				$this->data['new_password'] = array(
 					'name' => 'new',
 					'id'   => 'new',
-				'type' => 'password',
+					'type' => 'password',
 					'pattern' => '^.{'.$this->data['min_password_length'].'}.*$',
 				);
 				$this->data['new_password_confirm'] = array(
@@ -311,7 +314,7 @@ class Auth_controller extends MY_Controller {
 					{
 						//if the password was successfully changed
 						$this->session->set_flashdata('message', $this->ion_auth_model->messages());
-						$this->logout();
+						redirect(Route::named('login'), 'refresh');
 					}
 					else
 					{
@@ -421,13 +424,13 @@ class Auth_controller extends MY_Controller {
 			redirect(Route::named('forgot_password'), 'refresh');
 		}
 	}
-	
+
 
 	//deactivate the user
 	function deactivate($id)
 	{
 		$id =  $this->uri->segment('id');
-		
+
 		$this->load->library('form_validation');
 		$this->form_validation->set_rules('confirm', $this->lang->line('deactivate_validation_confirm_label'), 'required');
 		$this->form_validation->set_rules('id', $this->lang->line('deactivate_validation_user_id_label'), 'required|alpha_numeric');
@@ -468,13 +471,13 @@ class Auth_controller extends MY_Controller {
 	//edit a user
 	function edit_user()
 	{
-		$id = $this->uri->segment('id');
-		
+		$id = $this->auth->get_user_id();
+
 		if(is_null($id))
 		{
 			$id = $this->auth->get_user_id();
 		}
-		
+
 		$this->data['title'] = "Edit User";
 
 		if (!$this->auth->logged_in() || (!$this->auth->is_admin() && !($this->auth->get_user_id() == $id)))
@@ -544,7 +547,7 @@ class Auth_controller extends MY_Controller {
 				$this->session->set_flashdata('message', "User Saved");
 
 				redirect('/', 'refresh');
-				
+
 			}
 		}
 
@@ -637,7 +640,7 @@ class Auth_controller extends MY_Controller {
 		);
 
 		$this->_render_page('auth/auth/create_group', $this->data);
-		
+
 	}
 
 
@@ -666,10 +669,10 @@ class Auth_controller extends MY_Controller {
 					$this->session->set_flashdata('message', $this->lang->line('edit_group_saved'));
 					redirect(base_url(), 'refresh');
 				}
-				
+
 				$this->session->set_flashdata('message', $this->ion_auth_model->errors());
-				
-				
+
+
 			}
 		}
 
@@ -698,84 +701,84 @@ class Auth_controller extends MY_Controller {
 
 	function permission_list()
 	{
-		
+
 		$data->groups = $this->ion_auth_model->groups()->get();
-		
+
 		$data->users = $this->ion_auth_model->users()->get();
-		
+
 		$data->permissions = $this->ion_auth_model->permissions()->get();
-		
+
 		$this->_render_page('auth/auth/permission/permission_list', $data);
-		
+
 	}
-	
+
 	function load_permissions()
 	{
-		
+
 		$permission_type = $this->uri->segment('permission_type');
 		$id 			 = $this->uri->segment('id');
-	
+
 		$this->load->model('auth/form_models/Assign_permissions_model');
-		
-		
+
+
 		$this->data['object_data'] = $this->Assign_permissions_model->load_permission($permission_type, $id);
-			
+
 		if($this->data['object_data'] == FALSE)
 		{
 			show_404();
 		}
-		
+
 		$this->Assign_permissions_model->valid();
 
 		$this->_render_page('auth/auth/permission/load_permission');
-		
-		
+
+
 	}
-	
+
 	function add_permission()
 	{
 		$this->load->model('auth/form_models/Permissions_model');
-		
+
 		if($this->Permissions_model->valid())
 		{
 			redirect('permission_list', 'refresh');
 		}
-		
+
 		$this->_render_page('auth/auth/permission/permission_data');
 	}
-	
+
 	function edit_permission()
 	{
 		$permission_id = $this->uri->segment('id');
-		
+
 		$permission_object = $this->ion_auth_model->permissions()->where('id', $permission_id)->row();
-		
+
 		if($permission_object == FALSE)
 		{
 			show_404();
 		}
-		
+
 		$this->load->model('auth/form_models/Permissions_model');
-		
-		
+
+
 		$this->Permissions_model->carga('permission_object', $permission_object);
-		
+
 		$this->Permissions_model->valid();
-		
+
 		$this->_render_page('auth/auth/permission/permission_data');
 	}
 
 
-		/**************************************************************
-		 * 
-		 * 
-		 * 
-		 * 		SIN PASAR AL NUEVO SISTEMA
-		 * 
-		 * 
-		 * 
-		 * 
-		 * ***************************************************************/
+	/**************************************************************
+	 *
+	 *
+	 *
+	 * 		SIN PASAR AL NUEVO SISTEMA
+	 *
+	 *
+	 *
+	 *
+	 * ***************************************************************/
 
 
 
@@ -812,11 +815,15 @@ class Auth_controller extends MY_Controller {
 	function _render_page($view, $data=null, $render=false)
 	{
 
+		$this->template->content->view($view, $this->data);
+		$this->template->publish();
+
+		/*
 		$this->viewdata = (empty($data)) ? $this->data: $data;
 
 		$view_html = $this->load->view($view, $this->viewdata, $render);
 
-		if (!$render) return $view_html;
+		if (!$render) return $view_html;*/
 	}
 
 }

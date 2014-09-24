@@ -8,7 +8,14 @@ class Welcome extends MY_Controller {
 
 
     	// $this->load->controller('cyassets/Min/index', '', TRUE);
-		
+		$this->load->model('cy_comment_admin/Cy_comment_admin');
+
+	   // $this->Cy_comment_admin->close_comments('comment');
+
+	   // $this->Cy_comment_admin->close_comments('comment', 1);
+
+	    $this->Cy_comment_admin->open_comments('comment', 1, 1);
+
 		$this->load->view('header');
 		
 	   // echo $this->load->api('cy_comments/Comments/message_list', '');
@@ -17,7 +24,7 @@ class Welcome extends MY_Controller {
 	    // $data['a'] = $this->load->api('cy_comments/Comments/list', array('reference_id' => '1', 'inner_id' => '1'));
 	    $this->load->model('cy_comments/Cy_comments_model');
 	    $data['a'] = $this->Cy_comments_model->show_comments(1, 1);
-	    
+
 	    // $data['a'] = $this->disqus->show_comments('blogs', '5');
 	   
 		// $data['a'] = $this->disqus->simple_show_comments();

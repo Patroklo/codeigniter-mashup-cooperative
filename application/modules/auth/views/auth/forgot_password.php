@@ -1,15 +1,25 @@
-<h1><?php echo lang('forgot_password_heading');?></h1>
-<p><?php echo sprintf(lang('forgot_password_subheading'), $identity_label);?></p>
+	<div id="login_box">
 
-<div id="infoMessage"><?php echo $message;?></div>
+		<h1><?php echo lang('forgot_password_heading');?></h1>
 
-<?php echo form_open(current_url());?>
+		<?php if ($message != NULL) { ?>
+			<div class="alert alert-danger"><?php echo $message;?></div>
+		<?php } ?>
 
-      <p>
-      	<label for="email"><?php echo sprintf(lang('forgot_password_email_label'), $identity_label);?></label> <br />
-      	<?php echo form_input($email);?>
-      </p>
+		<div class="box">
+			
+			<p><?php echo sprintf(lang('forgot_password_subheading'), $identity_label);?></p>
+			
+			<?php echo form_open(current_url());?>
 
-      <p><?php echo form_submit('submit', lang('forgot_password_submit_btn'));?></p>
-
-<?php echo form_close();?>
+			      <p>
+			      	<label for="email"><?php echo sprintf(lang('forgot_password_email_label'), $identity_label);?></label> <br />
+			      	<?php echo form_input($email);?>
+			      </p>
+			
+			      <p><?php echo form_submit('submit', lang('forgot_password_submit_btn'));?></p>
+			
+			<?php echo form_close();?>
+			
+		</div>
+	</div>

@@ -405,8 +405,10 @@ class Cy_comments_model extends Cy_messages_model
 		function msg_insert_inner_id_permission($reference_id, $inner_id)
 		{
 			$this->load->model('cy_comment_admin/Cy_comment_admin');
+
+
 			
-			return TRUE;
+			return ! $this->Cy_comment_admin->is_closed($this->message_type, $reference_id, $inner_id);
 		}
 
 		function msg_update_permission()

@@ -17,8 +17,11 @@
 		{
 			// reference_id will be usually zero because all users
 			// will use the same blog
-			$data['reference_id'] = 0;
-			
+			if ( ! array_key_exists('parent_id', $data))
+			{
+				$data['reference_id'] = 0;
+			}
+
 			if (array_key_exists('parent_id', $data))
 			{
 				unset($data['parent_id']);
@@ -58,13 +61,18 @@
 				}
 				
 				$data_original 					= array();
-				$data_original['reference_id']	= $reference_id;
+				
+				if ( ! is_null($reference_id))
+				{
+					$data_original['reference_id']	= $reference_id;
+				}
+				
 				$data_original['parent_id']		= 0;
 				$data_original['message_type']  = $this->message_type;
 
 				
 				$query		  = $this->get_query(TRUE)->where($data_original)->
-													offset($offset);
+														offset($offset);
 				if($limit != FALSE)
 				{
 					$query	  = $query->limit($limit);

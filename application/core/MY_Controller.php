@@ -1,70 +1,76 @@
 <?php
 
 
-	class MY_Controller extends CI_Controller {
-		
-		private $__filter_params;
-		
-		public $data;
-		
-		function __construct()
+class MY_Controller extends CI_Controller {
+
+	private $__filter_params;
+
+	public $data;
+
+	function __construct()
+	{
+		parent::__construct();
+
+		$this->data = new stdClass();
+
+		$this->__filter_params = array($this->uri->uri_string());
+
+		$this->call_filters('before');
+	}
+
+
+	public function _remap($method, $parameters = array())
+	{
+
+		empty($parameters) ? $this->$method() : call_user_func_array(array($this, $method), $parameters);
+
+		if($method != 'call_filters')
 		{
-			parent::__construct();
-			
-			$this->data = new stdClass();
-			
-			$this->__filter_params = array($this->uri->uri_string());
-			
-			$this->call_filters('before');
+			$this->call_filters('after');
 		}
-		
-		
-		public function _remap($method, $parameters = array())
+	}
+
+
+	private function call_filters($type)
+	{
+
+		$loaded_route = $this->router->get_active_route();
+		$filter_list = Route::get_filters($loaded_route, $type);
+
+		foreach($filter_list as $filter_data)
 		{
+			$param_list = $this->__filter_params;
 
-			empty($parameters) ? $this->$method() : call_user_func_array(array($this, $method), $parameters);
-			
-			if($method != 'call_filters')
+			$callback 	= $filter_data['filter'];
+			$params		= $filter_data['parameters'];
+
+			// check if callback has parameters
+			if(!is_null($params))
 			{
-				$this->call_filters('after');
-			}
-		}
-		
-		
-		private function call_filters($type)
-		{
+				// separate the multiple parameters in case there are defined
+				$params = explode(':', $params);
 
-			$loaded_route = $this->router->get_active_route();
-			$filter_list = Route::get_filters($loaded_route, $type);
-
-			foreach($filter_list as $filter_data)
-			{
-				$param_list = $this->__filter_params;
-				
-				$callback 	= $filter_data['filter'];
-				$params		= $filter_data['parameters'];
-				
-				// check if callback has parameters
-				if(!is_null($params))
+				// search for uris defined as parameters, they will be marked as {(.*)}
+				foreach($params as &$p)
 				{
-					// separate the multiple parameters in case there are defined
-					$params = explode(':', $params);
-					
-					// search for uris defined as parameters, they will be marked as {(.*)}
-					foreach($params as &$p)
+					if (preg_match('/\{(.*)\}/', $p, $match_p))
 					{
-						if (preg_match('/\{(.*)\}/', $p, $match_p))
-						{
-							$p = $this->uri->segment($match_p[1]);
-						}
+						$p = $this->uri->segment($match_p[1]);
 					}
-
-					$param_list = array_merge($param_list, $params);
 				}
 
-				call_user_func_array($callback, $param_list);
+				$param_list = array_merge($param_list, $params);
 			}
+
+			call_user_func_array($callback, $param_list);
 		}
-		
-		
 	}
+
+	function _render_page($view)
+	{
+		$this->template->content->view($view, $this->data);
+		$this->template->publish();
+	}
+
+
+}

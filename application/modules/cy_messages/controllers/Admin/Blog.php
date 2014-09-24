@@ -51,4 +51,28 @@ class Blog extends MY_Controller {
 	}
 
 
+	/**
+	 * 	Callbacks
+	 */
+	
+	public function message_url_check($str)
+	{
+		$query = $this->Cy_blog_model->me()->where('message_url', $str);
+		
+		if($this->Cy_blog_model->carga != FALSE)
+		{
+			$query = $query->where('id != ', $this->carga->get_data('id'));
+		}
+
+		$query = $query->get();
+		
+		if ($query->num_rows() > 0)
+		{
+			$this->form_validation->set_message('message_url_check', 'Ya existe una entrada de blog con la url dada.');
+			return FALSE;
+		}
+		
+		return TRUE;
+	}
+
 }

@@ -12,7 +12,7 @@ class base{
             
 			protected $_data = NULL;
 			
-			private $_state = NULL;
+			protected  $_state = NULL;
 			
 			protected $__object_loaded;
             

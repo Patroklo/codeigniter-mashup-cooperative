@@ -283,7 +283,7 @@ class Upload_model extends base_model{
 
 	private function copy_image($resize_data = FALSE, $manual_image_dir = NULL)
 	{
-		$this->load->library('cy_upload/image_moo');
+		
 		if($this->carga === FALSE)
 		{
 			return FALSE;
@@ -359,56 +359,7 @@ class Upload_model extends base_model{
 			$image_dir = $this->carga->file;
 		}
 
-
-		if($resize_data != FALSE)
-		{
-			$nueva_imagen = $this->image_moo->load($image_dir);
-
-			$instructions = explode('|',$resize_data['action']);
-
-			foreach($instructions as $inst)
-			{
-				if($inst == 'resize')
-				{
-					$nueva_imagen = $nueva_imagen->resize($resize_data['width'], $resize_data['height']);
-				}
-				elseif($inst == 'resize_crop')
-				{
-					$nueva_imagen = $nueva_imagen->resize_crop($resize_data['width'], $resize_data['height']);
-				}
-				elseif($inst == 'crop')
-				{
-					$nueva_imagen = $nueva_imagen->crop($resize_data['width'], $resize_data['height']);
-				}
-				elseif($inst == 'resize_smaller')
-				{
-					if($nueva_imagen->width > $resize_data['width'] and $nueva_imagen->height > $resize_data['height'])
-					{
-						$nueva_imagen = $nueva_imagen->resize($resize_data['width'], $resize_data['height']);
-					}
-				}
-				elseif($inst == 'resize_crop_smaller')
-				{
-					if($nueva_imagen->width > $resize_data['width'] and $nueva_imagen->height > $resize_data['height'])
-					{
-						$nueva_imagen = $nueva_imagen->resize_crop($resize_data['width'], $resize_data['height']);
-					}
-				}
-				elseif($inst == 'crop_smaller')
-				{
-					if($nueva_imagen->width > $resize_data['width'] and $nueva_imagen->height > $resize_data['height'])
-					{
-						$nueva_imagen = $nueva_imagen->crop($resize_data['width'], $resize_data['height']);
-					}
-				}
-			}
-
-			$nueva_imagen->save($new_image,TRUE);
-		}
-		else
-		{
-			copy($image_dir, $new_image);
-		}
+		parent::copy_image($image_dir, $new_image, $resize_data);
 
 		return $data;
 

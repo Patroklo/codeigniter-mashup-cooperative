@@ -21,11 +21,21 @@ class file_base extends Correcaminos\Objects\base{
 		// should be changed		
 		protected $directory	= 'files';
 		
+		
+		// list of copies that should be made once upload or insert is done.
+		
+		/**
+		 * example:
+		 * 				array('big' 		=> array('width' => 100,  'height' => 100, 'action' => 'resize_crop_smaller'			),
+							  'little' 		=> array('width' => 50,   'height' => 50,  'action' => 'resize_crop_smaller',
+		 * 					  'no_change'	=> false
+		 * 						// this will only copy the file and won't attempt any size change
+		 * 
+		 */
+		protected $copies = array();
+		
         function __construct($data = NULL, $_new_object = FALSE)
         {
-        	
-			
-			
         	// loads the basic data needed to launch the upload library
 			$parent_data = $this->__get_parent_data();
 			
@@ -154,7 +164,7 @@ class file_base extends Correcaminos\Objects\base{
 		 * =================================
 		 */
 
-	 	function save()
+	 	function save($file_upload_on = TRUE)
 		{
 			$CI =& get_instance();
 
@@ -177,13 +187,37 @@ class file_base extends Correcaminos\Objects\base{
 				throw new Exception("The reference id of the object type ".get_class($this)." it's not defined.", 1);
 			}
 			
-			$CI->load->model('cy_upload/ORM_Upload_Operations');
-			$CI->Orm_upload_operations->save_object($this);
-			
+			if ( empty($_FILES) or $file_upload_on == FALSE)
+			{
+				ORM_Operations::save_object($this);
+			}
+			else 
+			{
+				$CI->load->model('cy_upload/ORM_Upload_Operations');
+				$CI->Orm_upload_operations->save_object($this);
+				
+				$this->_copy_image();
+			}
+
 			$this->_state = NULL;
 		}
 		 
-		 
+		 public function _copy_image()
+		 {
+
+		 	if( ! $this->_object_loaded())
+			{
+				return FALSE;
+			}
+
+			if ( ! empty($this->copies))
+			{
+				$CI =& get_instance();
+				$CI->load->model('cy_upload/ORM_Upload_Operations');
+				$CI->Orm_upload_operations->copy_image($this, $this->copies);
+			}
+
+		 }
 		 
 		 
 		 

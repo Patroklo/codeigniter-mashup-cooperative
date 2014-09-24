@@ -78,13 +78,11 @@ class Orm_upload_operations extends CI_Model {
 
 			if($state == 'UPDATE')
 			{
-				
 				$this->update($object);
 				MemoryManager::update_object($object);
 			}
 			elseif($state == 'INSERT')
 			{
-				
 				$this->insert($object);
 				MemoryManager::insert_object($object);
 			}
@@ -121,6 +119,7 @@ class Orm_upload_operations extends CI_Model {
 
 	private function update($object)
 	{
+
 		$id = $object->get_data('id');
 
 		$insert_data = $this->insert($object);
@@ -146,6 +145,79 @@ class Orm_upload_operations extends CI_Model {
 	private function rules()
 	{
 		return $this->rules;
+	}
+
+
+	public function copy_image($object, $resize_data_arr)
+	{
+		$image_file = $object->get_data('file');
+		
+		$class_object = get_class($object);
+
+		$object_data = MemoryManager::get_class_data($class_object);
+
+		$object_table = $object_data->get_table();
+		
+		// make basic data, will be the same in every copy
+		
+		$insert_values = array(
+								'classid' 		=> $object->get_data('classid'),
+								'innerid' 		=> $object->get_data('innerid'),
+								'upload_date' 	=> date("Y-m-d H:i:s"),
+								'dir'			=> $object->get_data('dir'),
+								'format'		=> $object->get_data('format'),
+								'exif'			=> $object->get_data('exif'),
+								);
+
+
+
+		foreach ($resize_data_arr as $name => $resize_data)
+		{
+
+			// insert the new row
+			$new_copy_id = $this->correcaminos->beep_from($object_table)->values($insert_values)->insert();
+
+			$new_file_name = $insert_values['dir'].$new_copy_id.$insert_values['format'];
+	
+			// copy it and modify it's size if you have to
+			if (is_array($resize_data))
+			{
+				$this->Upload_engine->copy_image($object->get_data('file'), $new_file_name, $resize_data);
+			}
+			else
+			{
+				copy($object->get_data('file'), $new_file_name);
+			}
+			
+			// update data for the copy
+			$update_values = array(
+								   'file'		=> $new_file_name,
+								   'file_size'	=> filesize($new_file_name),
+								   'filename'	=> $new_copy_id,
+									);
+			
+			$this->correcaminos->beep_from($object_table)->where('id', $new_copy_id)->values($update_values)->update();
+			
+
+			// add the copy data into the original file
+			$copies = $object->get_data('copies');
+			
+			if ($copies != NULL or $copies != '')
+			{
+				$copies = json_decode($copies, TRUE);
+			}
+			else
+			{
+				$copies = array();
+			}
+			
+			$copies[$name] = $new_copy_id;
+			
+			$object->set_data('copies', json_encode($copies));
+		}
+
+		$object->save(FALSE);
+		
 	}
 
 

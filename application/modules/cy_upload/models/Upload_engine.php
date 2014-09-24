@@ -92,7 +92,7 @@ class Upload_engine extends CI_Model{
 				$this->classData[$row['class']] = $row;
 			}
 		}
-				
+
 		if(!array_key_exists($className, $this->classData))
 		{
 			throw new Exception("No se ha definido una clase de upload válida: ".$className, 1);
@@ -265,6 +265,62 @@ class Upload_engine extends CI_Model{
                 }
             }
         }
+	}
+	
+	
+	
+	function copy_image($image_dir, $new_image, $resize_data)
+	{
+		$this->load->library('cy_upload/image_moo');
+		if($resize_data != FALSE)
+		{
+			$nueva_imagen = $this->image_moo->load($image_dir);
+
+			$instructions = explode('|',$resize_data['action']);
+
+			foreach($instructions as $inst)
+			{
+				if($inst == 'resize')
+				{
+					$nueva_imagen = $nueva_imagen->resize($resize_data['width'], $resize_data['height']);
+				}
+				elseif($inst == 'resize_crop')
+				{
+					$nueva_imagen = $nueva_imagen->resize_crop($resize_data['width'], $resize_data['height']);
+				}
+				elseif($inst == 'crop')
+				{
+					$nueva_imagen = $nueva_imagen->crop($resize_data['width'], $resize_data['height']);
+				}
+				elseif($inst == 'resize_smaller')
+				{
+					if($nueva_imagen->width > $resize_data['width'] and $nueva_imagen->height > $resize_data['height'])
+					{
+						$nueva_imagen = $nueva_imagen->resize($resize_data['width'], $resize_data['height']);
+					}
+				}
+				elseif($inst == 'resize_crop_smaller')
+				{
+					if($nueva_imagen->width > $resize_data['width'] and $nueva_imagen->height > $resize_data['height'])
+					{
+						$nueva_imagen = $nueva_imagen->resize_crop($resize_data['width'], $resize_data['height']);
+					}
+				}
+				elseif($inst == 'crop_smaller')
+				{
+					if($nueva_imagen->width > $resize_data['width'] and $nueva_imagen->height > $resize_data['height'])
+					{
+						$nueva_imagen = $nueva_imagen->crop($resize_data['width'], $resize_data['height']);
+					}
+				}
+			}
+
+			$nueva_imagen->save($new_image,TRUE);
+		}
+		else
+		{
+			copy($image_dir, $new_image);
+		}
 	}
 	
 }

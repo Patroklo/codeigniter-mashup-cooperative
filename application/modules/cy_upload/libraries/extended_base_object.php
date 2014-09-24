@@ -9,11 +9,16 @@ class extended_base_object extends Correcaminos\Objects\base{
 	protected $field_object = array();
 	
 	
-	public function _get_loaded_file($file_fieldName)
+	public function _get_loaded_file($file_fieldName, $type = 'main')
 	{
 		if(!$this->_object_loaded())
 		{
 			return FALSE;
+		}
+		
+		if (is_null($type))
+		{
+			$type = 'main';
 		}
 		
 		if(!array_key_exists($file_fieldName, $this->field_object))
@@ -21,11 +26,17 @@ class extended_base_object extends Correcaminos\Objects\base{
 			return FALSE;
 		}
 		
-		return $this->field_object[$file_fieldName];
+		return $this->field_object[$file_fieldName][$type];
 	}
 	
-	public function get_file($file_fieldName, $id = NULL)
+	public function get_file($file_fieldName, $id = NULL, $type = NULL)
 	{
+		
+		if ($type === NULL and ! is_numeric($id))
+		{
+			$type = $id;
+			$id = NULL;
+		}
 
 		if(!$this->_object_loaded())
 		{
@@ -37,7 +48,7 @@ class extended_base_object extends Correcaminos\Objects\base{
 			$this->__get_file($file_fieldName, $id);
 		}
 		
-		return $this->_get_loaded_file($file_fieldName);
+		return $this->_get_loaded_file($file_fieldName, $type);
 		
 	}
 	
@@ -82,8 +93,29 @@ class extended_base_object extends Correcaminos\Objects\base{
 		{
 			$object_field->set_parent($this);
 			
-			$this->field_object[$file_fieldName] = $object_field;
+			$this->field_object[$file_fieldName]['main'] = $object_field;
+			
+			// check for copies
+			// and load them into memory
+			
+			if ($object_field->get_data('copies') != NULL and $object_field->get_data('copies') != '')
+			{
+				$copies_ids = $object_field->get_data('copies');
+				$copies_ids = json_decode($copies_ids, TRUE);
+				
+				$copies_flip = array_flip($copies_ids);
+				
+				$query = beep($file_fieldName)->where_in('id', $copies_ids)->get();
+				
+				foreach ($query->result() as $copy_object)
+				{
+					$this->field_object[$file_fieldName][$copies_flip[$copy_object->get_data('id')]] = $copy_object;
+				}
+				
+			}
 		}
+		
+		
 	}
 	
 	
